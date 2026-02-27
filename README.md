@@ -1,5 +1,6 @@
 For what it's worth here it is. I will assume it will break if you try to do clever things! BUT hopefully it helps
 Some of the ways things might work according to the rules might be a bit different (especially around movement)
+<img width="1652" height="907" alt="image" src="https://github.com/user-attachments/assets/433174f0-2447-4370-bbb6-bf7fb5baf9e1" />
 
 Ive included the images in a separate folder "/Optional Ai Images" in the module folder, they ARE Ai so you can use them or add your own in the Configuration Settings. The Ui is smaller if you dont use them.
 
