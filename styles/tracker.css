@@ -1,0 +1,2960 @@
+/* RMU Combat Phase Tracker UI styles (see scripts/main.js for behavior) */
+
+@font-face {
+  font-family: "Uncial Antiqua";
+  src: url("../fonts/UncialAntiqua-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+.rmu-cpt__wrap {
+  padding: 8px;
+  font-family: "Uncial Antiqua", serif;
+  /* Fill the whole app window so tinted backgrounds don't leave unused
+     window-content areas showing as a blank/grey region. */
+  min-height: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.rmu-cpt__header {
+  display: flex; justify-content: flex-start; align-items: center;
+  gap: 12px; padding: 8px 10px; border: 1px solid var(--color-border-light-2);
+  border-radius: 8px; background: var(--color-bg-option);
+}
+.rmu-cpt__header h2 { margin: 0; }
+.rmu-cpt__sub { opacity: 0.8; font-size: 12px; }
+.rmu-cpt__header-right { display:flex; gap: 8px; }
+
+.rmu-cpt__body {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  /* Let the body take the remaining height; Foundry's scrollY will apply */
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.rmu-cpt__row { border: 1px solid var(--color-border-light-2); border-radius: 10px; overflow: hidden; }
+.rmu-cpt__row-head { display: flex; gap: 10px; padding: 10px; align-items: center; background: var(--color-bg); }
+.rmu-cpt__img { width: 40px; height: 40px; object-fit: cover; border-radius: 6px; border: 1px solid var(--color-border-light-2); }
+.rmu-cpt__name { font-weight: 700; 
+}
+.rmu-cpt__controls { display:flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; align-items: center; }
+.rmu-cpt__control { display:flex; gap: 6px; align-items: center; }
+.rmu-cpt__control input[type="number"] { width: 64px; }
+.rmu-cpt__toggle.is-on { box-shadow: inset 0 0 0 2px var(--color-border-highlight); }
+.rmu-cpt__btn, .rmu-cpt__toggle { white-space: nowrap; }
+
+
+/* Slightly stronger shadow for key UI text (3D pop) */
+.rmu-cpt__name,
+.rmu-cpt__header h2,
+.rmu-cpt__phase-title,
+.rmu-cpt__btn,
+.rmu-cpt__toggle,
+.rmu-cpt__badge,
+.rmu-cpt__section-title {
+  text-shadow: 0 1px 0 rgba(0,0,0,0.35), 0 2px 3px rgba(0,0,0,0.22);
+}
+.rmu-cpt__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 8px;
+  padding: 6px;
+  background: var(--color-bg);
+}
+.rmu-cpt__phase {
+  border: 1px solid var(--color-border-light-2);
+  border-radius: 10px;
+  padding: 6px;
+  background: var(--color-bg-option);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.rmu-cpt__phase.is-current { box-shadow: inset 0 0 0 3px rgba(60, 140, 255, 0.95); border-color: rgba(255, 170, 170, 0.98);
+  font-weight: 700;
+  }
+.rmu-cpt__phase.is-broken { box-shadow: inset 0 0 0 3px var(--color-level-error); }
+
+.rmu-cpt__phase-title { font-weight: 700; font-size: 12px; opacity: 0.9; display:flex; justify-content: flex-start; gap: 8px; }
+.rmu-cpt__badge {
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border-light-2);
+  opacity: 0.9;
+}
+.rmu-cpt__badge.is-broken { border-color: var(--color-level-error); }
+
+.rmu-cpt__slot { display:flex; gap: 4px; align-items: flex-start; }
+.rmu-cpt__slot select { width: auto; }
+.rmu-cpt__slot select.is-auto { opacity: 0.85; font-style: italic; }
+.rmu-cpt__slot.is-disabled { opacity: 0.6; }
+.rmu-cpt__icon { width: 16px; text-align: center; }
+.rmu-cpt__muted { font-size: 12px; opacity: 0.85; }
+
+.rmu-cpt__empty { padding: 16px; }
+
+/* current-phase emphasis + lock styling */
+.rmu-cpt__phase.is-current {
+  box-shadow: inset 0 0 0 3px var(--color-border-highlight), 0 0 0 2px color-mix(in srgb, var(--color-border-highlight) 35%, transparent);
+}
+.rmu-cpt__phase.is-locked select:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* v0.4.0 patches */
+.rmu-cpt__slot { gap: 6px; }
+.rmu-cpt__cost { width: 60px; flex: 0 0 auto; }
+.rmu-cpt__phase.is-current {
+  box-shadow: inset 0 0 0 3px var(--color-border-highlight), 0 0 0 2px color-mix(in srgb, var(--color-border-highlight) 35%, transparent);
+}
+.rmu-cpt__phase.is-locked select:disabled { opacity: 0.55; cursor: not-allowed; }
+.rmu-cpt__badge.is-broken { border-color: var(--color-level-error); }
+
+/* v0.5.0 - custom vertical dropdowns (VDD) */
+.rmu-vdd { position: relative; width: 100%; }
+.rmu-vdd.is-disabled { opacity: 0.6; }
+.rmu-vdd.is-auto .rmu-vdd__btn { outline: 1px dashed var(--color-border-highlight); }
+
+.rmu-vdd__btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 4px 8px;
+  border: 1px solid var(--color-border-light-primary);
+  border-radius: 4px;
+  background: var(--color-bg);
+  cursor: pointer;
+}
+.rmu-vdd__btn:disabled { cursor: not-allowed; }
+
+.rmu-vdd__menu {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 4px);
+  width: 100%;
+  max-height: 260px;
+  overflow: auto;
+  border: 1px solid var(--color-border-light-primary);
+  border-radius: 6px;
+  background: var(--color-bg);
+  z-index: 9999;
+  display: none;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+}
+
+.rmu-vdd.is-open .rmu-vdd__menu { display: block; }
+
+.rmu-vdd.is-dropup .rmu-vdd__menu {
+  top: auto;
+  bottom: calc(100% + 4px);
+}
+
+.rmu-vdd__opt {
+  padding: 6px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.rmu-vdd__opt:hover {
+  background: color-mix(in srgb, var(--color-border-highlight) 20%, transparent);
+}
+.rmu-vdd__opt.is-selected {
+  font-weight: 700;
+  background: color-mix(in srgb, var(--color-border-highlight) 28%, transparent);
+}
+
+.rmu-vdd__chev { opacity: 0.85; }
+.rmu-vdd--cost { max-width: 84px; }
+
+/* v0.5.1 - theme accents */
+.rmu-cpt__wrap.theme-gm { --rmu-cpt-accent: #c0392b; }
+.rmu-cpt__wrap.theme-player { --rmu-cpt-accent: #2980b9; }
+
+.rmu-cpt__wrap .rmu-cpt__phase.is-current {
+  box-shadow: inset 0 0 0 3px var(--rmu-cpt-accent), 0 0 0 2px color-mix(in srgb, var(--rmu-cpt-accent) 35%, transparent);
+}
+
+.rmu-cpt__wrap .rmu-cpt__toggle.is-on {
+  border-color: var(--rmu-cpt-accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--rmu-cpt-accent) 35%, transparent);
+}
+
+.rmu-cpt__wrap .rmu-vdd__opt:hover {
+  background: color-mix(in srgb, var(--rmu-cpt-accent) 20%, transparent);
+}
+.rmu-cpt__wrap .rmu-vdd__opt.is-selected {
+  background: color-mix(in srgb, var(--rmu-cpt-accent) 28%, transparent);
+}
+
+
+/* v0.5.8 - UI version label */
+.rmu-cpt__ver {
+  font-size: 11px;
+  opacity: 0.75;
+  margin-top: 2px;
+}
+
+/* v0.5.11 - compact defaults (keep) */
+.rmu-cpt-app .window-content { padding: 6px !important; }
+.rmu-cpt-app .rmu-cpt__header { margin-bottom: 6px !important; }
+.rmu-cpt-app .rmu-cpt__grid { gap: 6px !important; }
+.rmu-cpt-app .rmu-cpt__phase { padding: 6px !important; }
+
+/* v0.6.19.37.3 - keep phase cards compact (avoid stretched empty space around images) */
+.rmu-cpt-app .rmu-cpt__grid {
+  /* Fixed-width columns so cards do NOT expand to fill the row */
+  grid-template-columns: repeat(auto-fit, minmax(222px, 222px)) !important;
+  justify-content: start !important;
+  /* Prevent shorter cards from stretching to tallest card (removes vertical dead space) */
+  align-items: start !important;
+  padding: 2px !important;
+  gap: 3px !important;
+}
+
+.rmu-cpt-app .rmu-cpt__phase {
+  padding: 2px !important;
+  gap: 2px !important;
+  align-self: start !important;
+}
+
+.rmu-cpt-app .rmu-cpt__slot {
+  gap: 3px !important;
+}
+
+
+/* v0.5.14: allow dropdown menus to escape scroll containers */
+.rmu-cpt-app .window-content { overflow: visible; }
+.rmu-cpt__body { overflow: visible; }
+
+/* Allow custom dropdown to overflow its containers (prevents clipping by phase/frame). */
+.rmu-cpt-app.window-app .window-content { overflow: visible !important; }
+.rmu-cpt__wrap, .rmu-cpt__body, .rmu-cpt__grid, .rmu-cpt__phase { overflow: visible !important; }
+
+/* v0.6.19.37.11 - layout: less jammed left, squarer phase cards, stronger text depth */
+
+/* Stronger 3D text depth across the UI */
+.rmu-cpt-app {
+  text-shadow: 0 2px 0 rgba(0,0,0,0.55), 0 5px 10px rgba(0,0,0,0.40) !important;
+}
+
+/* Even stronger for key labels */
+.rmu-cpt__name,
+.rmu-cpt__header h2,
+.rmu-cpt__phase-title,
+.rmu-cpt__btn,
+.rmu-cpt__toggle,
+.rmu-cpt__badge,
+.rmu-cpt__spinner-label,
+.rmu-cpt__conc-label {
+  text-shadow: 0 2px 0 rgba(0,0,0,0.62), 0 6px 12px rgba(0,0,0,0.48) !important;
+}
+
+/* Spread the top controls across the available width */
+.rmu-cpt-app .rmu-cpt__row-head {
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+}
+.rmu-cpt-app .rmu-cpt__meta {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+.rmu-cpt-app .rmu-cpt__controls {
+  width: 100% !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  column-gap: 18px !important;
+  row-gap: 10px !important;
+}
+/* Keep Concentration block from drifting too far right: drop it to its own line and align left */
+.rmu-cpt-app .rmu-cpt__concwrap {
+  margin-left: 0 !important;
+  flex: 1 1 100% !important;
+  align-items: flex-start !important;
+}
+.rmu-cpt-app .rmu-cpt__concbar { justify-content: flex-start !important; }
+
+/* Phase cards: slightly wider so they read more square, and distribute across the row */
+.rmu-cpt-app .rmu-cpt__grid {
+  /* Match landscape action images (300px wide) */
+  grid-template-columns: repeat(auto-fit, minmax(340px, 340px)) !important;
+  justify-content: space-evenly !important;
+  padding: 2px !important;
+  gap: 6px !important;
+}
+
+/* Reduce vertical slack above/below the image without changing the image size */
+.rmu-cpt-app .rmu-cpt__phase {
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+  gap: 4px !important;
+}
+.rmu-cpt-app .rmu-cpt__phase-title { margin-bottom: 0 !important; }
+.rmu-cpt-app .rmu-action-selectwrap { padding: 0 !important; margin: 0 !important; }
+.rmu-cpt-app .rmu-cpt__slot { margin: 0 !important; }
+
+/* Ensure dropdown sits above everything else in the app. */
+.rmu-vdd { position: relative; z-index: 50; }
+.rmu-vdd.is-open { z-index: 9999; }
+.rmu-vdd__menu {
+  position: absolute;
+  z-index: 10000;
+  max-height: 280px;
+  overflow: auto;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.35);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+  background: rgba(28, 28, 34, 0.98);
+  backdrop-filter: blur(2px);
+  padding: 6px;
+}
+
+/* Make options highly readable on parchment/canvas backgrounds */
+.rmu-vdd__opt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  color: rgba(255, 170, 170, 0.98);
+  font-weight: 700;
+  line-height: 1.15;
+}
+.rmu-vdd__opt i { opacity: 0.9; }
+.rmu-vdd__opt:hover {
+  background: rgba(255,255,255,0.10);
+}
+.rmu-vdd__opt.is-selected {
+  background: rgba(255,255,255,0.16);
+  outline: 1px solid rgba(255,255,255,0.20);
+}
+
+/* Slightly improve trigger contrast too */
+.rmu-vdd__trigger {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(0,0,0,0.25);
+}
+
+/* v0.5.17 - full UI makeover + portal dropdown (unclippable) */
+.rmu-cpt-app.window-app {
+  --cpt-bg: rgba(18, 18, 24, 0.72);
+  --cpt-panel: rgba(255, 255, 255, 0.08);
+  --cpt-panel2: rgba(255, 255, 255, 0.10);
+  --cpt-border: rgba(0, 0, 0, 0.35);
+  --cpt-text: rgba(255,255,255,0.92);
+  --cpt-muted: rgba(255,255,255,0.70);
+  --cpt-shadow: 0 10px 24px rgba(0,0,0,0.35);
+}
+
+.rmu-cpt-app.window-app .window-header {
+  background: linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0.25));
+  border-bottom: 1px solid rgba(0,0,0,0.35);
+}
+.rmu-cpt-app.window-app .window-title { letter-spacing: 0.3px; }
+
+.rmu-cpt-app.window-app .window-content {
+  background: var(--cpt-bg);
+  color: var(--cpt-text);
+  padding: 6px !important;
+}
+
+.rmu-cpt__wrap {
+  background: rgba(0,0,0,0.18);
+  border: 1px solid var(--cpt-border);
+  border-radius: 12px;
+  box-shadow: var(--cpt-shadow);
+  padding: 10px;
+}
+
+.rmu-cpt__header h2 { margin: 0; font-size: 16px; }
+.rmu-cpt__ver { color: var(--cpt-muted); }
+
+.rmu-cpt__row-head {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 8px;
+}
+
+.rmu-cpt__controls .rmu-cpt__btn,
+.rmu-cpt__toggle,
+.rmu-vdd__trigger {
+  border-radius: 10px !important;
+  border: 1px solid rgba(0,0,0,0.35) !important;
+  background: var(--cpt-panel) !important;
+  color: var(--cpt-text) !important;
+  box-shadow: 0 2px 0 rgba(0,0,0,0.20);
+}
+
+.rmu-cpt__controls .rmu-cpt__btn:hover,
+.rmu-cpt__toggle:hover,
+.rmu-vdd__trigger:hover {
+  background: var(--cpt-panel2) !important;
+}
+
+.rmu-cpt__toggle.is-on {
+  border-color: var(--rmu-cpt-accent) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--rmu-cpt-accent) 35%, transparent);
+}
+
+.rmu-cpt__grid { gap: 6px !important; }
+.rmu-cpt__phase {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(0,0,0,0.35);
+  border-radius: 12px;
+  padding: 6px !important;
+}
+.rmu-cpt__phase.is-current {
+  box-shadow: inset 0 0 0 3px var(--rmu-cpt-accent), 0 6px 18px rgba(0,0,0,0.25);
+}
+
+.rmu-cpt__phase-title { color: var(--cpt-muted); font-weight: 700; }
+
+/* --- Portal dropdown --- */
+.rmu-vdd__portal {
+  background: rgba(28, 28, 34, 0.98);
+  border: 1px solid rgba(0,0,0,0.45);
+  border-radius: 12px;
+  box-shadow: 0 18px 34px rgba(0,0,0,0.55);
+  padding: 8px;
+  backdrop-filter: blur(2px);
+}
+.rmu-vdd__portal .rmu-vdd__opt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  user-select: none;
+  color: rgba(255, 170, 170, 0.98);
+  font-weight: 700;
+  }
+.rmu-vdd__portal .rmu-vdd__opt:hover {
+  background: rgba(255,255,255,0.10);
+}
+.rmu-vdd__portal .rmu-vdd__opt.is-selected {
+  background: rgba(255,255,255,0.16);
+  outline: 1px solid rgba(255,255,255,0.18);
+}
+.rmu-vdd__portal .rmu-vdd__label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Inputs (Bonus AP) */
+.rmu-cpt__bonusap select,
+.rmu-cpt__bonusap input {
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.35);
+  background: rgba(255,255,255,0.08);
+  color: var(--cpt-text);
+}
+
+/* v0.5.18 - text readability fixes */
+.rmu-cpt-app, .rmu-cpt-app * { color: var(--cpt-text); }
+.rmu-cpt__sub, .rmu-cpt__phase-title, .rmu-vdd__opt-text { color: var(--cpt-muted); }
+.rmu-vdd__text { color: var(--cpt-text); }
+.rmu-cpt__bonusap, .rmu-cpt__bonusap * { color: var(--cpt-text); }
+.rmu-cpt__bonusap select, .rmu-cpt__bonusap input { color: var(--cpt-text) !important; }
+.rmu-cpt__bonusap option { color: #111; } /* dropdown OS menu */
+
+
+/* v0.5.19 - ensure app doesn't clip internal elements */
+.rmu-cpt-app.window-app .window-content{ overflow: visible !important; }
+
+/* v0.5.19 - remove inner frame so everything feels like one window */
+.rmu-cpt__wrap{
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+.rmu-cpt__header{
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+.rmu-cpt__phase{
+  background: rgba(0,0,0,0.20) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+}
+
+/* v0.5.20 - flatten window chrome/frame a bit */
+.rmu-cpt-app.window-app { border: none !important; box-shadow: none !important; }
+.rmu-cpt-app.window-app .window-header { border: none !important; box-shadow: none !important; }
+.rmu-cpt-app.window-app .window-content { border: none !important; box-shadow: none !important; }
+
+/* Ensure header/sub text above phases is readable */
+.rmu-cpt__header, .rmu-cpt__header * { color: var(--cpt-text) !important; }
+.rmu-cpt__sub { color: rgba(255,255,255,0.85) !important; }
+
+/* v0.5.21 - native selects + spinner styling */
+.rmu-cpt__select{
+  width: 100%;
+  border-radius: 10px;
+  padding: 6px 10px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(0,0,0,0.35);
+  color: var(--cpt-text);
+}
+.rmu-cpt__select:disabled{
+  opacity: 0.55;
+}
+.rmu-cpt__select option{
+  color: #111; /* native dropdown list */
+}
+.rmu-cpt__bonusap-input{
+  width: 72px;
+  text-align: center;
+  border-radius: 10px;
+  padding: 4px 8px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(0,0,0,0.35);
+  color: var(--cpt-text) !important;
+}
+
+/* v0.5.25 - native selects + spinner styling */
+.rmu-cpt__select{
+  width: 100%;
+  border-radius: 10px;
+  padding: 6px 10px;
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(0,0,0,0.35);
+  color: var(--cpt-text);
+}
+.rmu-cpt__select:disabled{ opacity: 0.55; }
+.rmu-cpt__select option{ color: #111; }
+.rmu-cpt__select--cost{ max-width: 90px; }
+.rmu-cpt__bonusap-input{
+  width: 110px;
+  text-align: center;
+  border-radius: 10px;
+  padding: 4px 8px;
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(0,0,0,0.35);
+  color: var(--cpt-text) !important;
+}
+
+/* v0.5.29 - numeric spinner model */
+.rmu-cpt__bonusap-input[type="number"]{
+  appearance: auto;
+}
+
+/* v0.5.31 - portrait frame matches image size (3x) */
+.rmu-cpt__img-frame{
+  width: 120px;
+  height: 120px;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid var(--color-border-light-2);
+  flex: 0 0 auto;
+}
+.rmu-cpt__img{
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 0;
+  border: 0;
+  display: block;
+  transform: none;
+}
+
+
+/* v0.5.31 - prevent select text clipping */
+.rmu-cpt__select{
+  min-height: 34px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  line-height: 1.2;
+}
+.rmu-cpt__select--cost{
+  min-height: 34px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+/* v0.5.32 - tighter header + spinner model */
+.rmu-cpt__meta{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+/* FIN ACT? early-finish toggle for range-cost actions */
+.rmu-cpt__finact{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 6px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.06);
+  user-select: none;
+}
+.rmu-cpt__finact input{
+  margin: 0;
+}
+.rmu-cpt__finact small{
+  font-size: 10px;
+  line-height: 1.05;
+  opacity: 0.95;
+}
+.rmu-cpt__name{
+  margin-top: 2px;
+}
+.rmu-cpt__controls{
+  margin-top: 4px;
+  gap: 8px;
+}
+.rmu-cpt__spinner{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.rmu-cpt__spinner-label{
+  font-weight: 600;
+  opacity: 0.95;
+  text-align: center;
+}
+.rmu-cpt__spinner-control{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.rmu-cpt__spinbtn{
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.08);
+  color: var(--cpt-text);
+  line-height: 1;
+  font-weight: 700;
+}
+.rmu-cpt__spinbtn:hover{
+  background: rgba(255,255,255,0.12);
+}
+.rmu-cpt__bonusap-input{
+  width: 56px;
+  height: 28px;
+  padding: 2px 6px;
+  text-align: center;
+}
+.rmu-cpt__top{
+  padding-bottom: 10px;
+}
+.rmu-cpt__grid{
+  margin-top: 10px;
+}
+
+/* v0.5.32 - allow native dropdowns to render without clipping */
+.rmu-phase-tracker-v3 .window-content{
+  overflow: visible !important;
+}
+.rmu-cpt{
+  overflow: visible;
+}
+.rmu-cpt__grid, .rmu-cpt__phase, .rmu-cpt__slot{
+  overflow: visible;
+}
+/* v0.5.33 - wider phase frames so action text fits */
+.rmu-cpt__grid{
+  grid-template-columns: repeat(4, minmax(210px, 1fr));
+  overflow-x: auto;
+}
+.rmu-cpt__phase{
+  min-width: 210px;
+}
+.rmu-cpt__select{
+  text-overflow: ellipsis;
+}
+
+/* v0.5.37 - spinner is button-driven */
+.rmu-cpt__bonusap-input[readonly]{
+  cursor: default;
+}
+.rmu-cpt__bonusap-input[readonly]::-webkit-outer-spin-button,
+.rmu-cpt__bonusap-input[readonly]::-webkit-inner-spin-button{
+  -webkit-appearance: none;
+  margin: 0;
+}
+.rmu-cpt__bonusap-input[readonly]{
+  -moz-appearance: textfield;
+}
+
+
+/* Invalid selection overlay (chain would break) */
+.rmu-cpt__select.is-invalid {
+  box-shadow: inset 0 0 0 2px rgba(220, 30, 30, 0.95);
+  background: rgba(220, 30, 30, 0.15) !important;
+}
+
+
+/* Completion badge */
+.rmu-cpt__badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.rmu-cpt__badge--complete {
+  background: rgba(30, 170, 60, 0.18);
+  color: rgba(255, 170, 170, 0.98);
+  font-weight: 700;
+  border: 1px solid rgba(30, 170, 60, 0.55);
+}
+/* Completed chains: do NOT tint the whole selector.
+   Completion is shown via the green "Complete!!" label only. */
+.rmu-cpt__select.is-complete {
+  box-shadow: none !important;
+  background: inherit !important;
+}
+
+
+/* Range-cost extra selection penalty badge */
+.rmu-cpt__badge--range {
+  background: rgba(155, 80, 205, 0.18);
+  color: rgba(255, 170, 170, 0.98);
+  font-weight: 700;
+  border: 1px solid rgba(155, 80, 205, 0.55);
+}
+
+
+/* Force current phase highlight to BLUE (override any theme reds) */
+.rmu-cpt__phase.is-current {
+  box-shadow: inset 0 0 0 3px rgba(60, 140, 255, 0.95) !important;
+  border-color: rgba(60, 140, 255, 0.75) !important;
+}
+
+
+/* Range-cost penalty overlay */
+.rmu-cpt__select-wrap.has-penalty { position: relative; }
+.rmu-cpt__select-wrap.has-penalty::after {
+  content: attr(data-penalty);
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-weight: 800;
+  /* Requested: triple-size penalty text and make it red */
+  font-size: 36px;
+  line-height: 1;
+  color: rgba(255, 170, 170, 0.98);
+  font-weight: 700;
+  text-shadow: 0 2px 0 rgba(0,0,0,0.55), 0 0 10px rgba(220, 25, 25, 0.55);
+  background: rgba(220, 25, 25, 0.12);
+  border: 1px solid rgba(220, 25, 25, 0.70);
+  padding: 0px 6px;
+  border-radius: 10px;
+}
+.rmu-cpt__select.has-penalty {
+  background: rgba(155, 80, 205, 0.14) !important;
+  box-shadow: inset 0 0 0 2px rgba(155, 80, 205, 0.70) !important;
+}
+
+/* Optional inline penalty text (if ever displayed) */
+.rmu-cpt__pen {
+  font-size: 36px;
+  line-height: 1;
+  font-weight: 800;
+  color: rgba(255, 170, 170, 0.98);
+  font-weight: 700;
+  text-shadow: 0 2px 0 rgba(0,0,0,0.55), 0 0 10px rgba(220, 25, 25, 0.55);
+}
+
+/* If a selector is Complete *and* has a range penalty label, we keep the
+   penalty styling (purple) rather than forcing green. */
+.rmu-cpt__select.is-complete.has-penalty {
+  background: rgba(155, 80, 205, 0.14) !important;
+  box-shadow: inset 0 0 0 2px rgba(155, 80, 205, 0.70) !important;
+}
+
+/* "Complete!!" label styling (green text, shadow, 2.5x size) */
+.rmu-cpt__complete {
+  color: rgba(80, 255, 140, 0.98);
+  font-weight: 800;
+  font-size: 3.125em;
+  line-height: 1;
+  text-shadow: 0 2px 0 rgba(0,0,0,0.55), 0 0 10px rgba(80, 255, 140, 0.45);
+}
+
+/* When there is NO selector image (either images disabled or no image for the action),
+   shrink the green Complete!! label so it doesn't cover left-side movement overlays. */
+.rmu-cpt__slot--noimg .rmu-cpt__complete {
+  font-size: 2.08em; /* ~2/3 of 3.125em */
+}
+
+
+.rmu-cpt__select-wrap.has-penalty[data-penalty=""]::after { content: ""; border: none; background: transparent; padding: 0; }
+
+
+.rmu-cpt__concbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.rmu-cpt__concwrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.rmu-cpt__conc-label {
+  font-weight: 600;
+  opacity: 0.95;
+  text-align: center;
+  font-size: 12px;
+}
+
+.rmu-cpt__concbtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  width: auto;
+  padding: 3px 8px;
+  white-space: nowrap;
+}
+
+.rmu-cpt__concbtn:disabled {
+  opacity: 0.5;
+  filter: grayscale(1);
+}
+
+
+.rmu-cpt__inst { display:flex; flex-direction: column; gap: 4px; min-width: 220px; }
+.rmu-cpt__inst .rmu-cpt__select { width: 240px; max-width: 320px; }
+
+/* v0.6.19.31 - ensure Uncial applies everywhere + smallest practical body text */
+.rmu-cpt-app, .rmu-cpt-app * {
+  font-family: "Uncial Antiqua", serif !important;
+}
+
+/* Default (non-heading) text as small as practical without harming readability */
+.rmu-cpt-app { font-size: 12px; text-shadow: 0 1px 0 rgba(0,0,0,0.28), 0 2px 2px rgba(0,0,0,0.18); }
+
+/* Actor name should be the biggest text in the UI */
+.rmu-cpt__name {
+  font-size: 19px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.2px;
+}
+
+/* Heading stays readable but smaller than actor name */
+.rmu-cpt__header h2 { font-size: 16px !important; }
+
+/* Secondary text a bit smaller */
+/* Keep general small UI text compact */
+.rmu-cpt__sub,
+.rmu-cpt__ver,
+.rmu-cpt__phase-title {
+  font-size: 11px !important;
+}
+
+/* Make the headers ABOVE controls much bigger */
+.rmu-cpt__spinner-label,
+.rmu-cpt__conc-label {
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  line-height: 1.05 !important;
+
+}
+
+/* Controls inherit Uncial + compact size */
+/* Buttons: as small as Uncial stays readable */
+.rmu-cpt__toggle,
+.rmu-cpt__spinbtn,
+.rmu-cpt__controls .rmu-cpt__btn {
+  font-size: 9px !important;
+  line-height: 1.05 !important;
+}
+
+/* Selects/inputs: keep slightly larger for readability */
+.rmu-cpt__select,
+.rmu-cpt__bonusap-input,
+.rmu-cpt__inst .rmu-cpt__select {
+  font-size: 10px !important;
+  line-height: 1.05 !important;
+}
+
+
+/* Action image display (optional) */
+.rmu-cpt__slot .rmu-action-img {
+  display: block;
+  /* Landscape art: image stays ABOVE selector, but renders wide */
+  width: 225px;
+  height: 126px; /* ~16:9 */
+  object-fit: cover;
+  margin: 0 auto 2px auto; /* minimal gap below image */
+  opacity: 1;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  background: none;
+  border-radius: 0;
+}
+
+/* Place the action image ABOVE the selector (not overlapping) */
+.rmu-action-selectwrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  width: 100%;
+  /* do NOT stretch taller than its contents (prevents whitespace above/below image) */
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.rmu-action-selectwrap .rmu-action-img {
+  align-self: center;
+}
+
+/* Image overlay (used for Move Your BMR distance readout) */
+.rmu-action-imgwrap {
+  position: relative;
+  align-self: center;
+  display: inline-block;
+}
+
+.rmu-action-img-overlay {
+  position: absolute;
+  left: 6px;
+  top: 6px;
+  right: auto;
+  bottom: auto;
+  padding: 4px 6px;
+  border-radius: 6px;
+  font-size: 11px;
+  line-height: 1.2;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.65);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.9);
+  pointer-events: none;
+  user-select: none;
+  /* Force multi-line stacking even if some global/system CSS tries to nowrap text */
+  white-space: pre-line !important;
+  display: block !important;
+  text-align: left;
+  max-width: calc(100% - 12px);
+}
+
+/* Incidental movement overlay (non-Move Your BMR) */
+.rmu-action-img-overlay.rmu-action-img-overlay--incidental {
+  /* Keep the same look; just allow the extra penalty line to stand out */
+}
+
+.rmu-action-img-overlay__pen {
+  margin-top: 2px;
+  color: #ff4040;
+  font-weight: 800;
+}
+
+/* When an action has movement overlays but NO action image (or images are disabled),
+   render the overlay as a small block aligned to the LEFT inside the phase frame. */
+.rmu-action-left-overlay {
+  align-self: flex-start;
+  margin: 2px 0 2px 0;
+  padding: 4px 6px;
+  border-radius: 6px;
+  font-size: 11px;
+  line-height: 1.2;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.65);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.9);
+  pointer-events: none;
+  user-select: none;
+  white-space: pre-line !important;
+  display: block !important;
+  text-align: left;
+  max-width: calc(100% - 2px);
+}
+
+.rmu-action-left-overlay__pen {
+  margin-top: 2px;
+  color: #ff4040;
+  font-weight: 800;
+}
+
+.rmu-action-selectwrap select {
+  width: auto;
+}
+
+/* Further tighten vertical whitespace in phase slots without changing image size */
+.rmu-cpt-app .rmu-cpt__slot {
+  align-items: flex-start !important;
+  gap: 2px !important;
+}
+
+/* When multiple MAIN selectors are rendered within a single visible Phase (e.g. 1- or 2-phase rounds),
+   lay them out horizontally with their action images above each selector. */
+.rmu-cpt-app .rmu-cpt__mains.is-horizontal {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  /* Never stack the MAIN selectors vertically in 1–2 phase modes.
+     Keep them on a single row and let the Phase card expand to fit. */
+  flex-wrap: nowrap;
+  overflow-x: visible;
+  overflow-y: visible;
+  gap: 6px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+
+/* --- FIX82: Prevent multi-slot overlap in 1–2 phase modes -------------------
+   In 1/2-phase rounds a single visible phase may contain multiple MAIN selectors.
+   Ensure the stacks have real spacing and can wrap if needed (never overlap). */
+.rmu-cpt-app.rmu-cpt__wrap[data-phase-count="1"] .rmu-cpt__mains.is-horizontal,
+.rmu-cpt-app.rmu-cpt__wrap[data-phase-count="2"] .rmu-cpt__mains.is-horizontal {
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  column-gap: 18px !important;
+  row-gap: 14px !important;
+}
+
+.rmu-cpt-app.rmu-cpt__wrap[data-phase-count="1"] .rmu-cpt__mains.is-horizontal .rmu-cpt__slot,
+.rmu-cpt-app.rmu-cpt__wrap[data-phase-count="2"] .rmu-cpt__mains.is-horizontal .rmu-cpt__slot {
+  /* Keep each stack wide enough for the landscape action image + dropdown */
+  min-width: 235px !important; /* image is 225px wide; leave breathing room */
+}
+
+/* Keep the image+select block constrained so stacks stay separated cleanly. */
+.rmu-cpt-app.rmu-cpt__wrap[data-phase-count="1"] .rmu-cpt__mains.is-horizontal .rmu-action-selectwrap,
+.rmu-cpt-app.rmu-cpt__wrap[data-phase-count="2"] .rmu-cpt__mains.is-horizontal .rmu-action-selectwrap {
+  width: 235px !important;
+}
+
+.rmu-cpt-app.rmu-cpt__wrap[data-phase-count="1"] .rmu-cpt__mains.is-horizontal .rmu-action-selectwrap select,
+.rmu-cpt-app.rmu-cpt__wrap[data-phase-count="2"] .rmu-cpt__mains.is-horizontal .rmu-action-selectwrap select {
+  width: 100% !important;
+}
+/* ------------------------------------------------------------------------ */
+
+/* When the round uses 1–2 phases, widen the phase card so all main selectors
+   (with their 300px landscape images) are visible at once without scrolling. */
+.rmu-cpt-app.rmu-cpt__wrap[data-phase-count="1"] .rmu-cpt__grid {
+  grid-template-columns: max-content !important;
+  justify-content: center !important;
+}
+
+.rmu-cpt-app.rmu-cpt__wrap[data-phase-count="2"] .rmu-cpt__grid {
+  grid-template-columns: repeat(2, max-content) !important;
+  justify-content: space-evenly !important;
+}
+
+.rmu-cpt-app.rmu-cpt__wrap[data-phase-count="1"] .rmu-cpt__phase,
+.rmu-cpt-app.rmu-cpt__wrap[data-phase-count="2"] .rmu-cpt__phase {
+  width: max-content !important;
+  /* main slots: 300px image each + 46px chain separators + gaps + padding (then +30% for 1–2 phase modes) */
+  min-width: calc(
+    (
+      (var(--rmu-mains-count, 1) * 300px)
+      + ((var(--rmu-mains-count, 1) - 1) * 46px)
+      + ((var(--rmu-mains-count, 1) - 1) * 6px)
+      + 24px
+	    ) * 1.56
+  ) !important;
+}
+
+/* (Handled above) */
+
+/* Each slot shares remaining width evenly; keep selects from overflowing. */
+.rmu-cpt-app .rmu-cpt__mains.is-horizontal .rmu-cpt__slot {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 0;
+  /* IMPORTANT: in 1–2 phase modes each selector is a self-contained vertical stack
+     (image ABOVE dropdown), and stacks sit side-by-side within the Phase frame. */
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2px;
+}
+
+/* Keep per-selector metadata (REQ/FIN ACT?/penalties/Complete) under the dropdown
+   so it stays inside the Phase border and doesn't push the row wider. */
+.rmu-cpt-app .rmu-cpt__mains.is-horizontal .rmu-cpt__slot > .rmu-cpt__meta {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+/* Center the image+dropdown block within each slot in horizontal mode. */
+.rmu-cpt-app .rmu-cpt__mains.is-horizontal .rmu-action-selectwrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* In horizontal mode, do not force the select wrapper to full width.
+   Full-width children will make each slot wrap to its own line (appearing vertical). */
+.rmu-cpt-app .rmu-cpt__mains.is-horizontal .rmu-action-selectwrap {
+  width: auto;
+}
+
+/* In 1–2 phase modes we must be able to see ALL main selectors at once.
+   Base styling sets .rmu-cpt__select to width:100%, which makes each selector
+   consume the full phase width and pushes the other selectors off-screen.
+   Override ONLY for the horizontal main-selector strip. */
+.rmu-cpt-app .rmu-cpt__mains.is-horizontal .rmu-cpt__select {
+  width: auto;
+  max-width: none;
+  flex: 0 0 auto;
+}
+
+/* Separator between selectors for LOST/BROKEN chain state */
+.rmu-cpt-app .rmu-cpt__mains.is-horizontal .rmu-cpt__chainsep {
+  flex: 0 0 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
+/* Ensure multi-slot (1–2 phase) layouts expand the PHASE frame to contain all selectors.
+   The baseline grid forces 222px columns, which causes the horizontal selector strip
+   to overflow outside the phase border. We override ONLY for rows/phases marked as
+   multi-slot by the template (ph.isMultiSlot / row.hasMultiSlot). */
+.rmu-cpt-app .rmu-cpt__grid.is-multislot {
+  grid-template-columns: repeat(auto-fit, max-content) !important;
+  justify-content: center !important;
+}
+
+.rmu-cpt-app .rmu-cpt__phase.is-multislot {
+  width: max-content !important;
+  max-width: none !important;
+}
+
+.rmu-cpt-app .rmu-cpt__chainbadge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  border: 2px solid rgba(255,255,255,0.55);
+  background: rgba(0,0,0,0.35);
+}
+
+.rmu-cpt-app .rmu-cpt__chainsep.is-lost .rmu-cpt__chainbadge {
+  border-color: rgba(255, 170, 170, 0.98);
+  font-weight: 700;
+  }
+
+.rmu-cpt-app .rmu-cpt__chainsep.is-broken .rmu-cpt__chainbadge {
+  border-color: rgba(255, 170, 170, 0.98);
+  font-weight: 700;
+  }
+
+/* Make the selects/buttons visually tighter (less internal padding) */
+.rmu-cpt-app .rmu-cpt__select,
+.rmu-cpt-app .rmu-cpt__toggle,
+.rmu-cpt-app .rmu-cpt__spinbtn {
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+}
+
+/* Action Images config app */
+#rmu-action-images-config .rmu-aic-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+#rmu-action-images-config .rmu-aic-table th,
+#rmu-action-images-config .rmu-aic-table td {
+  padding: 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  vertical-align: top;
+}
+#rmu-action-images-config .rmu-aic-action .rmu-aic-label {
+  font-weight: 700;
+}
+#rmu-action-images-config .rmu-aic-action .rmu-aic-key {
+  font-size: 11px;
+  opacity: 0.7;
+}
+#rmu-action-images-config .rmu-aic-tools {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+#rmu-action-images-config .rmu-aic-btn {
+  width: auto;
+}
+
+
+/* History button */
+.rmu-cpt__historybtn,
+.rmu-cpt__guidebtn{font-size:11px !important; line-height:1.15 !important; padding:6px 12px !important;}
+
+
+/* History dialog styling */
+.rmu-cpt-history .window-content { font-family: "Uncial Antiqua", serif; }
+.rmu-cpt-history table { width: 100%; border-collapse: collapse; }
+.rmu-cpt-history th, .rmu-cpt-history td { padding: 4px 6px; border-bottom: 1px solid rgba(255,255,255,0.12); }
+.rmu-cpt-history thead th { border-bottom: 1px solid rgba(255,255,255,0.25); }
+
+/* v0.6.19.37.9 - add more colour accents (without changing layout) */
+.rmu-cpt__wrap {
+  /* fallback accent if theme class isn't applied for some reason */
+  --rmu-cpt-accent: var(--rmu-cpt-accent, #3c8cff);
+}
+
+/* Header: subtle accent wash */
+.rmu-cpt-app .rmu-cpt__header {
+  background:
+    linear-gradient(120deg,
+      color-mix(in srgb, var(--rmu-cpt-accent) 22%, rgba(0,0,0,0.35)),
+      rgba(0,0,0,0.22) 55%,
+      rgba(0,0,0,0.18)
+    ) !important;
+  border-color: color-mix(in srgb, var(--rmu-cpt-accent) 18%, rgba(255,255,255,0.08)) !important;
+}
+
+/* Phase cards: coloured top rule so they feel less monochrome */
+.rmu-cpt-app .rmu-cpt__phase {
+  position: relative;
+}
+.rmu-cpt-app .rmu-cpt__phase::before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  top: 0;
+  height: 2px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--rmu-cpt-accent) 55%, transparent);
+  opacity: 0.45;
+}
+.rmu-cpt-app .rmu-cpt__phase.is-current::before {
+  opacity: 0.95;
+}
+
+/* Buttons: accent-tinted surfaces */
+.rmu-cpt-app .rmu-cpt__spinbtn,
+.rmu-cpt-app .rmu-cpt__historybtn,
+.rmu-cpt-app .rmu-cpt__guidebtn,
+.rmu-cpt-app .rmu-cpt__toggle {
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--rmu-cpt-accent) 16%, rgba(255,255,255,0.10)),
+      rgba(255,255,255,0.06)
+    ) !important;
+  border-color: color-mix(in srgb, var(--rmu-cpt-accent) 18%, rgba(255,255,255,0.14)) !important;
+}
+
+.rmu-cpt-app .rmu-cpt__spinbtn:hover,
+.rmu-cpt-app .rmu-cpt__historybtn:hover,
+.rmu-cpt-app .rmu-cpt__guidebtn:hover,
+.rmu-cpt-app .rmu-cpt__toggle:hover {
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--rmu-cpt-accent) 22%, rgba(255,255,255,0.12)),
+      rgba(255,255,255,0.08)
+    ) !important;
+}
+
+/* ON-state concentration buttons: clearer, more colourful */
+.rmu-cpt-app .rmu-cpt__toggle.is-on {
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--rmu-cpt-accent) 34%, rgba(255,255,255,0.14)),
+      rgba(255,255,255,0.08)
+    ) !important;
+}
+
+/* Select focus: accent outline */
+.rmu-cpt-app .rmu-cpt__select:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--rmu-cpt-accent) 40%, transparent), inset 0 0 0 1px rgba(0,0,0,0.35) !important;
+}
+
+/* Little text accents so headings pop */
+.rmu-cpt-app .rmu-cpt__spinner-label,
+.rmu-cpt-app .rmu-cpt__conc-label {
+  color: color-mix(in srgb, var(--rmu-cpt-accent) 45%, var(--cpt-text)) !important;
+}
+
+/* v0.6.19.37.11 (final overrides) - ensure these win over earlier compact patches */
+
+.rmu-cpt-app {
+  text-shadow: 0 2px 0 rgba(0,0,0,0.55), 0 5px 10px rgba(0,0,0,0.40) !important;
+}
+
+.rmu-cpt__name,
+.rmu-cpt__header h2,
+.rmu-cpt__phase-title,
+.rmu-cpt__btn,
+.rmu-cpt__toggle,
+.rmu-cpt__badge,
+.rmu-cpt__spinner-label,
+.rmu-cpt__conc-label {
+  text-shadow: 0 2px 0 rgba(0,0,0,0.62), 0 6px 12px rgba(0,0,0,0.48) !important;
+}
+
+.rmu-cpt-app .rmu-cpt__row-head {
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+}
+.rmu-cpt-app .rmu-cpt__meta {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+.rmu-cpt-app .rmu-cpt__controls {
+  width: 100% !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  column-gap: 18px !important;
+  row-gap: 10px !important;
+}
+.rmu-cpt-app .rmu-cpt__concwrap { margin-left: auto !important; }
+
+.rmu-cpt-app .rmu-cpt__grid {
+  grid-template-columns: repeat(auto-fit, minmax(252px, 252px)) !important;
+  justify-content: space-evenly !important;
+  align-items: start !important;
+  padding: 2px !important;
+  gap: 8px !important;
+}
+
+.rmu-cpt-app .rmu-cpt__phase {
+  padding: 4px !important;
+  gap: 4px !important;
+}
+
+.rmu-cpt-app .rmu-action-selectwrap,
+.rmu-cpt-app .rmu-cpt__slot {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* v0.6.19.37.12 - match mockup: squarer phase tiles, centered content, less vertical waste */
+
+/* Stronger 3D text depth (requested) */
+.rmu-cpt-app {
+  text-shadow: 0 3px 0 rgba(0,0,0,0.70), 0 9px 16px rgba(0,0,0,0.52) !important;
+}
+.rmu-cpt__name,
+.rmu-cpt__header h2,
+.rmu-cpt__phase-title,
+.rmu-cpt__btn,
+.rmu-cpt__toggle,
+.rmu-cpt__badge,
+.rmu-cpt__spinner-label,
+.rmu-cpt__conc-label {
+  text-shadow: 0 3px 0 rgba(0,0,0,0.78), 0 10px 18px rgba(0,0,0,0.58) !important;
+}
+
+/* Make phase cards more square like the mockup */
+.rmu-cpt-app .rmu-cpt__grid {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 280px)) !important;
+  justify-content: space-between !important;
+  padding: 8px 10px !important;
+  gap: 10px !important;
+}
+
+.rmu-cpt-app .rmu-cpt__phase {
+  width: 280px;
+  /* keep height driven by contents but prevent tall stretching */
+  align-self: start !important;
+  justify-content: flex-start !important;
+  padding: 8px !important;
+  gap: 6px !important;
+}
+
+/* Phase title like the mockup: centered and larger */
+.rmu-cpt-app .rmu-cpt__phase-title {
+  justify-content: center !important;
+  text-align: center !important;
+  font-size: 16px !important;
+  line-height: 1.1 !important;
+  margin: 0 !important;
+  padding: 2px 0 4px 0 !important;
+}
+
+/* Stack image + select vertically (no side gutters), and remove vertical slack */
+.rmu-cpt-app .rmu-cpt__slot {
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 6px !important;
+  margin: 0 !important;
+}
+
+/* Hide the little left icon column so the layout matches the mockup */
+.rmu-cpt-app .rmu-cpt__slot .rmu-cpt__icon {
+  display: none !important;
+}
+
+.rmu-cpt-app .rmu-action-selectwrap {
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Image: keep size as-is, but remove any extra top/bottom padding/frame */
+.rmu-cpt-app .rmu-action-img {
+  display: block !important;
+  width: 195px !important;
+  height: 195px !important;
+  object-fit: cover !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  outline: none !important;
+  background: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+/* Bonus-slot "No bonus slot" text: keep it tucked up (less empty space) */
+.rmu-cpt-app .rmu-cpt__slot.is-disabled {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Keep the selector snug under the image */
+.rmu-cpt-app .rmu-cpt__select {
+  margin-top: 0 !important;
+}
+
+/* Center the little meta line under the select inside phase tiles */
+.rmu-cpt-app .rmu-cpt__phase .rmu-cpt__meta {
+  width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin: 0 !important;
+}
+
+/* v0.6.19.37.15 - landscape phase tiles + themed history window */
+
+/* Phase tiles: landscape feel (wider, shorter) */
+.rmu-cpt-app .rmu-cpt__grid {
+  grid-template-columns: repeat(auto-fit, minmax(390px, 390px)) !important;
+  justify-content: space-evenly !important;
+  gap: 10px !important;
+}
+
+/* NOTE: v0.6.19.37.15 briefly moved the image beside the selector.
+   User wants the image ABOVE the selector, so later overrides restore vertical stacking. */
+
+/* Phase title: centered like the mockup */
+.rmu-cpt-app .rmu-cpt__phase-title {
+  justify-content: center !important;
+}
+.rmu-cpt-app .rmu-cpt__phase-title .rmu-cpt__badge {
+  margin-left: 10px;
+}
+
+/* History window: reuse main theme + table styling */
+.rmu-cpt-history.window-app .window-content {
+  background: var(--cpt-bg) !important;
+  color: var(--cpt-text) !important;
+}
+
+.rmu-cpt__historywrap {
+  padding: 4px;
+}
+
+/* v0.6.19.37.17 - image ABOVE selector (no crop), centered widget headings, tighter top layout */
+
+/* Phase tiles: wide enough to comfortably fit landscape art above the selector */
+.rmu-cpt-app .rmu-cpt__grid {
+  grid-template-columns: repeat(auto-fit, minmax(380px, 380px)) !important;
+  justify-content: space-evenly !important;
+}
+.rmu-cpt-app .rmu-cpt__phase {
+  width: 380px !important;
+}
+
+/* Image ABOVE selector (vertical), never cropped */
+.rmu-cpt-app .rmu-action-selectwrap {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+.rmu-cpt-app .rmu-action-selectwrap select {
+  width: 100% !important;
+}
+
+/* Landscape image presentation WITHOUT cropping: letterbox if needed */
+.rmu-cpt-app .rmu-action-img {
+  width: 100% !important;
+  max-width: 360px !important;
+  height: 170px !important; /* consistent tile height */
+  object-fit: contain !important; /* DO NOT crop */
+  margin: 0 !important;
+  padding: 0 !important;
+  opacity: 1 !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: none !important;
+  border-radius: 0 !important;
+}
+
+/* Center-align all widget headings */
+.rmu-cpt__spinner-label,
+.rmu-cpt__conc-label {
+  display: block !important;
+  width: 100% !important;
+  text-align: center !important;
+}
+
+/* Top controls: keep bonus + instantaneous close together and nearer the center */
+.rmu-cpt-app .rmu-cpt__controls {
+  justify-content: center !important;
+  column-gap: 12px !important;
+}
+
+/* Concentration header/buttons centered (and not pushed to the far right) */
+.rmu-cpt-app .rmu-cpt__concwrap {
+  margin-left: 0 !important;
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+}
+.rmu-cpt-app .rmu-cpt__concbar {
+  justify-content: center !important;
+}
+
+/* Stronger 3D text depth (requested) */
+.rmu-cpt__name,
+.rmu-cpt__header h2,
+.rmu-cpt__phase-title,
+.rmu-cpt__btn,
+.rmu-cpt__toggle,
+.rmu-cpt__badge,
+.rmu-cpt__spinner-label,
+.rmu-cpt__conc-label {
+  text-shadow: 0 4px 0 rgba(0,0,0,0.80), 0 12px 22px rgba(0,0,0,0.62) !important;
+}
+
+
+.rmu-cpt__history-round {
+  margin: 12px 0 6px 0;
+  font-size: 14px;
+  color: var(--cpt-muted);
+}
+
+.rmu-cpt__history-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.rmu-cpt__history-table th,
+.rmu-cpt__history-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  vertical-align: top;
+}
+
+.rmu-cpt__history-table th {
+  text-align: left;
+  font-weight: 700;
+  color: rgba(255, 170, 170, 0.98);
+  font-weight: 700;
+  background: rgba(0,0,0,0.22);
+}
+
+.rmu-cpt__history-table tr:last-child td { border-bottom: none; }
+
+/* v0.6.19.37.24 - keep top controls COMPACT (avoid gigantic widgets) */
+.rmu-cpt-app .rmu-cpt__controls {
+  font-size: 100% !important;
+  column-gap: 12px !important;
+  row-gap: 8px !important;
+}
+
+/* v0.6.19.37.20 - ACTUALLY enlarge widget text (older rules used fixed px + !important) */
+/* Widget headings */
+.rmu-cpt-app .rmu-cpt__spinner-label,
+.rmu-cpt-app .rmu-cpt__conc-label {
+  font-size: 22.5px !important; /* +50% */
+  line-height: 1.05 !important;
+}
+
+/* Widget buttons (bonus +/- and concentration buttons) */
+.rmu-cpt-app .rmu-cpt__toggle,
+.rmu-cpt-app .rmu-cpt__spinbtn,
+.rmu-cpt-app .rmu-cpt__controls .rmu-cpt__btn {
+  font-size: 13px !important; /* 10px * 1.25 */
+  line-height: 1.05 !important;
+}
+
+/* Widget selects/inputs */
+.rmu-cpt-app .rmu-cpt__select {
+  font-size: 15px !important;
+  line-height: 1.05 !important;
+}
+
+/* Bonus + Instant widgets: match concentration button font size */
+.rmu-cpt-app .rmu-cpt__bonusap-input,
+.rmu-cpt-app .rmu-cpt__inst .rmu-cpt__select {
+  font-size: 13px !important;
+  line-height: 1.05 !important;
+}
+
+/* Give the bonus spinner a little breathing room so larger text doesn't clip */
+.rmu-cpt-app .rmu-cpt__spinbtn {
+  width: 28px !important;
+  height: 28px !important;
+}
+.rmu-cpt-app .rmu-cpt__bonusap-input {
+  width: 65px !important;
+  height: 28px !important;
+  padding: 3px 10px !important;
+}
+
+
+/* GM vs Player UI tint is disabled – the app background is driven by the CURRENT USER color. */
+.rmu-cpt__wrap.rmu-cpt--gm,
+.rmu-cpt__wrap.rmu-cpt--player {
+  background: none !important;
+}
+
+
+/* v0.6.19.37.34 - Owner user color background */
+.rmu-cpt__wrap.has-owner-color {
+  background: linear-gradient(180deg, var(--rmu-owner-bg-top), var(--rmu-owner-bg-bot)) !important;
+}
+/* Keep panels readable on tinted backgrounds */
+.rmu-cpt--gm-ui .rmu-cpt__header,
+.rmu-cpt--gm-ui .rmu-cpt__phase,
+.rmu-cpt--player-ui .rmu-cpt__header,
+.rmu-cpt--player-ui .rmu-cpt__phase {
+  backdrop-filter: blur(1px);
+}
+
+/* NOTE: Do not force .rmu-cpt__phase into a grid layout.
+   The phase container must remain a normal vertical stack so existing mechanics
+   (including badges and completion highlights) are unaffected.
+   Horizontal layout for the extra selectors in 1/2-phase rounds is handled ONLY
+   inside .rmu-cpt__mains.is-horizontal above. */
+
+
+
+
+/* v0.6.19.37.23 - GM-owned actor rows + orange flashing conc toggles */
+.rmu-cpt__row.is-gm-owned .rmu-cpt__row-head,
+.rmu-cpt__row.is-gm-owned .rmu-cpt__grid {
+  background: #061a38; /* dark blue for GM-owned actors */
+}
+
+@keyframes rmu-cpt__orangeFlash {
+  0%, 100% {
+    background: rgba(255, 140, 0, 0.48);
+    box-shadow:
+      0 0 0 3px rgba(255, 140, 0, 0.78),
+      0 0 26px rgba(255, 140, 0, 0.60),
+      0 0 52px rgba(255, 140, 0, 0.38);
+  }
+  50% {
+    background: rgba(255, 140, 0, 1.00);
+    box-shadow:
+      0 0 0 4px rgba(255, 140, 0, 1.00),
+      0 0 38px rgba(255, 140, 0, 0.90),
+      0 0 78px rgba(255, 140, 0, 0.55);
+  }
+}
+
+/* Any concentration toggle in ON state flashes orange */
+.rmu-cpt__toggle.is-on {
+  animation: rmu-cpt__orangeFlash 0.55s ease-in-out infinite !important;
+  border-color: rgba(255, 140, 0, 1.0) !important;
+  filter: drop-shadow(0 0 16px rgba(255, 140, 0, 0.80));
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .rmu-cpt__toggle.is-on { animation: none !important; }
+}
+
+
+/* v0.6.19.37.29 - Mental Focus reminders (yellow blink) */
+@keyframes rmu-cpt__yellowBlink {
+  0%, 100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 10px rgba(255, 226, 102, 0.75));
+    box-shadow:
+      0 0 0 2px rgba(255, 226, 102, 0.85),
+      0 0 22px rgba(255, 226, 102, 0.55);
+  }
+  50% {
+    opacity: 0.45;
+    filter: drop-shadow(0 0 18px rgba(255, 226, 102, 0.95));
+    box-shadow:
+      0 0 0 3px rgba(255, 226, 102, 1.00),
+      0 0 34px rgba(255, 226, 102, 0.85);
+  }
+}
+
+/* Endurance reminders (red) */
+@keyframes rmu-cpt__redBlink {
+  0%, 100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 10px rgba(255, 80, 80, 0.75));
+    box-shadow:
+      0 0 0 2px rgba(255, 80, 80, 0.85),
+      0 0 22px rgba(255, 80, 80, 0.55);
+  }
+  50% {
+    opacity: 0.45;
+    filter: drop-shadow(0 0 18px rgba(255, 80, 80, 0.95));
+    box-shadow:
+      0 0 0 3px rgba(255, 80, 80, 1.00),
+      0 0 34px rgba(255, 80, 80, 0.85);
+  }
+}
+
+.rmu-cpt__mf-label {
+  margin-top: 8px;
+  padding: 6px 10px;
+  text-align: center;
+  font-family: "Uncial Antiqua", serif;
+  font-weight: 700;
+  font-size: 0.67em;
+  letter-spacing: 0.4px;
+  color: #ffe266;
+  background: rgba(30, 26, 10, 0.55);
+  border: 2px solid rgba(255, 226, 102, 0.85);
+  border-radius: 10px;
+  animation: rmu-cpt__yellowBlink 0.85s ease-in-out infinite;
+}
+
+.rmu-cpt__mf-btn {
+  margin-top: 8px;
+  width: fit-content;
+  max-width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 8px 10px;
+  text-align: center;
+  font-family: "Uncial Antiqua", serif;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  color: #1a1400;
+  background: rgba(255, 226, 102, 0.92);
+  border: 2px solid rgba(255, 226, 102, 1.0);
+  border-radius: 12px;
+  cursor: pointer;
+  animation: rmu-cpt__yellowBlink 0.85s ease-in-out infinite;
+}
+
+.rmu-cpt__mf-btn:hover {
+  background: rgba(255, 226, 102, 1.0);
+  transform: translateY(-1px);
+}
+
+.rmu-cpt__end-btn {
+  margin-top: 8px;
+  width: fit-content;
+  max-width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 8px 10px;
+  text-align: center;
+  font-family: "Uncial Antiqua", serif;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  color: #2a0000;
+  background: rgba(255, 85, 85, 0.92);
+  border: 2px solid rgba(255, 85, 85, 1.0);
+  border-radius: 12px;
+  cursor: pointer;
+  animation: rmu-cpt__redBlink 0.85s ease-in-out infinite;
+}
+
+.rmu-cpt__end-btn:hover {
+  background: rgba(255, 85, 85, 1.0);
+  transform: translateY(-1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rmu-cpt__mf-label,
+  .rmu-cpt__mf-btn,
+  .rmu-cpt__end-btn { animation: none !important; }
+}
+
+
+
+/* v0.6.19.37.35 - UI background uses the CURRENT USER Foundry color (same as the user-dot) */
+.rmu-cpt-app .window-content {
+  /* Keep the UI opaque so the canvas/grid/other windows don't show through. */
+  background: linear-gradient(
+      180deg,
+      var(--rmu-user-bg-top, rgba(0,0,0,0.38)),
+      var(--rmu-user-bg-bot, rgba(0,0,0,0.16))
+    ),
+    rgb(8, 8, 10);
+  background-color: rgb(8, 8, 10);
+}
+.rmu-cpt__wrap.has-user-color {
+  /* Window-content carries the tinted background; keep inner wrap transparent. */
+  background: transparent !important;
+  /* Make all accent highlights match the user's configured Foundry color */
+  --rmu-cpt-accent: var(--rmu-user-hex) !important;
+}
+
+/* Override any prior per-role / gm-owned background tints */
+.rmu-cpt__wrap.rmu-cpt--gm,
+.rmu-cpt__wrap.rmu-cpt--player,
+.rmu-cpt__wrap.has-owner-color {
+  background: transparent !important;
+}
+.rmu-cpt__row.is-gm-owned .rmu-cpt__row-head,
+.rmu-cpt__row.is-gm-owned .rmu-cpt__grid {
+  background: transparent !important;
+}
+
+/* ============================
+   FIX17: COMPACT HORIZONTAL MAIN SELECTORS
+   Some theme blocks force action wrappers/selects to 100% width (often with !important),
+   which makes horizontal mains appear as one full-width selector per line.
+   In 1–2 phase modes we must keep each selector only as wide as its own content.
+   ============================ */
+
+/* Do NOT stretch the per-slot wrapper in horizontal mains */
+.rmu-cpt-app .rmu-cpt__mains.is-horizontal {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  /* IMPORTANT: do not clip content in 1–2 phase modes.
+     No scrollbars + no wrap-around is achieved by sizing the Phase frame,
+     not by hiding overflow (which was clipping the rightmost selectors). */
+  overflow: visible !important;
+  gap: 6px !important;
+}
+
+.rmu-cpt-app .rmu-cpt__mains.is-horizontal .rmu-action-selectwrap {
+  width: auto !important;
+  align-items: center !important;
+}
+
+/* In horizontal mains, each slot must NOT be full-width (older theme blocks force 100%). */
+.rmu-cpt-app .rmu-cpt__mains.is-horizontal .rmu-cpt__slot {
+  width: auto !important;
+  flex: 0 0 auto !important;
+  align-items: center !important;
+}
+
+/* Ensure the image is ABOVE the selector inside the Phase frame (no stretching). */
+.rmu-cpt-app .rmu-cpt__mains.is-horizontal .rmu-action-img {
+  width: 225px !important;
+  max-width: 225px !important;
+  height: 126px !important;
+  object-fit: cover !important;
+  margin: 0 auto 2px auto !important;
+}
+
+/* Do NOT force selects to fill the phase width in horizontal mains */
+.rmu-cpt-app .rmu-cpt__mains.is-horizontal .rmu-cpt__select {
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  flex: 0 0 auto !important;
+  display: inline-block !important;
+}
+
+/* Some legacy rules target `select` directly (e.g. `.rmu-action-selectwrap select { width:100% !important; }`).
+   Override them in horizontal mains so autosize + content-width works. */
+.rmu-cpt-app .rmu-cpt__mains.is-horizontal .rmu-action-selectwrap select {
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+}
+
+/* Let the phase card size naturally to its contents (no hard min-width math) */
+.rmu-cpt-app.rmu-cpt__wrap[data-phase-count="1"] .rmu-cpt__phase,
+.rmu-cpt-app.rmu-cpt__wrap[data-phase-count="2"] .rmu-cpt__phase {
+  min-width: 0 !important;
+  width: max-content !important;
+}
+
+
+
+/* v0.6.19.37.35.13 - fix25: chain-broken overlay overrides Complete + make UI smaller */
+
+/* If you broke an existing chain to do a (possibly complete) 1 AP action, show RED even if complete */
+.rmu-cpt__select.is-chainbroken,
+.rmu-cpt__select.is-chainbroken.is-complete,
+.rmu-cpt__select.is-chainbroken.is-complete.has-penalty {
+  box-shadow: inset 0 0 0 2px rgba(220, 30, 30, 0.95) !important;
+  background: rgba(220, 30, 30, 0.15) !important;
+}
+
+
+/* Small centered label under a selector when a chain is incomplete (red overlay). */
+.rmu-cpt__incomplete {
+  display: block;
+  margin-top: 2px;
+  text-align: center;
+  font-size: 1.0em;
+  line-height: 1.05;
+  color: rgba(255, 60, 60, 0.98);
+  font-weight: 700;
+  text-shadow: 0 2px 2px rgba(0, 0, 0, 0.55);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: var(--rmu-action-img-w);
+  max-width: var(--rmu-action-img-w);
+}
+
+/* Compact UI defaults: reduce overall footprint while keeping readability */
+.rmu-cpt-app.window-app .window-content { padding: 4px !important; }
+.rmu-cpt__header { padding: 6px 8px !important; gap: 8px !important; }
+.rmu-cpt__header h2 { font-size: 14px !important; }
+.rmu-cpt__img { width: 32px !important; height: 32px !important; }
+
+.rmu-cpt__row-head { padding: 8px !important; }
+.rmu-cpt__controls { gap: 6px !important; row-gap: 8px !important; column-gap: 12px !important; }
+
+.rmu-cpt__select { padding: 4px 8px !important; }
+.rmu-cpt__bonusap-input { width: 62px !important; padding: 3px 6px !important; }
+
+/* fix74: Phase frames must grow with their contents.
+   If any selector (main/bonus/instant) becomes wider, the Phase card grows too,
+   instead of the selector spilling outside the Phase border. */
+.rmu-cpt-app .rmu-cpt__grid {
+  /* Each phase becomes a content-sized column. */
+  grid-auto-flow: column !important;
+  grid-auto-columns: max-content !important;
+  /* Disable fixed track sizing so max-content can win. */
+  grid-template-columns: none !important;
+  justify-content: start !important;
+  gap: 5px !important;
+  overflow-x: auto !important;
+}
+
+/* Phase card sizing:
+   - Standard 3-4+ phase layouts: fixed width so other controls cannot resize cards.
+   - 1-2 phase/multislot layouts: later rules intentionally use max-content sizing.
+*/
+.rmu-cpt-app.rmu-cpt__wrap:not([data-phase-count="1"]):not([data-phase-count="2"]) .rmu-cpt__phase {
+  width: 270px !important;
+  min-width: 270px !important;
+  max-width: 270px !important;
+}
+
+/* FIX: Prevent phase dropdowns from growing/shrinking when option text changes
+   (reported: selecting an Instantaneous Action makes phase selectors wider).
+   Keep the phase-action select stacks a stable width in 3-4+ phase layouts. */
+.rmu-cpt-app.rmu-cpt__wrap:not([data-phase-count="1"]):not([data-phase-count="2"]) .rmu-cpt__mains .rmu-action-selectwrap,
+.rmu-cpt-app.rmu-cpt__wrap:not([data-phase-count="1"]):not([data-phase-count="2"]) .rmu-cpt__bonusrow .rmu-action-selectwrap {
+  /* fix144: keep stacks matched to the action image width */
+  width: var(--rmu-action-img-w, 191.25px) !important;
+  max-width: var(--rmu-action-img-w, 191.25px) !important;
+}
+
+.rmu-cpt-app.rmu-cpt__wrap:not([data-phase-count="1"]):not([data-phase-count="2"]) .rmu-cpt__mains .rmu-action-selectwrap select.rmu-cpt__select,
+.rmu-cpt-app.rmu-cpt__wrap:not([data-phase-count="1"]):not([data-phase-count="2"]) .rmu-cpt__bonusrow .rmu-action-selectwrap select.rmu-cpt__select {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.rmu-cpt-app .rmu-action-img {
+  /* fix144: selector/action images 1/8 larger */
+  width: 191.25px !important;
+  height: 108px !important;
+}
+
+/* Slightly tighter phase cards */
+.rmu-cpt-app .rmu-cpt__phase { padding: 4px !important; gap: 3px !important; border-radius: 10px !important; }
+.rmu-cpt-app .rmu-cpt__phase-title { font-size: var(--rmu-cpt-font-sm) !important; }
+.rmu-cpt-app .rmu-cpt__spinner-label,
+.rmu-cpt-app .rmu-cpt__conc-label { font-size: var(--rmu-cpt-font-sm) !important; }
+
+
+/* v0.6.19.37.35.15 - fix25: shrink ALL components (fonts, images, paddings) so the compact window fits */
+
+/* Global sizing tokens for this app */
+.rmu-cpt-app {
+  --rmu-cpt-font: 8.25px;
+  --rmu-cpt-font-sm: 7.5px;
+  --rmu-cpt-font-xs: 6.75px;
+  --rmu-cpt-name: 11.25px;
+  --rmu-cpt-title: 9.75px;
+
+  --rmu-portrait: 90px;
+  /* fix144: selector/action images 1/8 larger (x1.125) */
+  --rmu-action-img-w: 191.25px;
+  --rmu-action-img-h: 108px;
+  --rmu-chainsep-w: 34px;
+  --rmu-mains-gap: 4px;
+}
+
+/* Overall font scale */
+.rmu-cpt-app { font-size: var(--rmu-cpt-font) !important; }
+.rmu-cpt__header h2 { font-size: var(--rmu-cpt-title) !important; }
+.rmu-cpt__name { font-size: var(--rmu-cpt-name) !important; }
+.rmu-cpt__sub,
+.rmu-cpt__ver,
+.rmu-cpt__phase-title,
+.rmu-cpt__spinner-label,
+.rmu-cpt__conc-label { font-size: var(--rmu-cpt-font-sm) !important; }
+
+/* Buttons + toggles */
+.rmu-cpt__toggle,
+.rmu-cpt__spinbtn,
+.rmu-cpt__controls .rmu-cpt__btn,
+.rmu-cpt__historybtn,
+.rmu-cpt__guidebtn { font-size: var(--rmu-cpt-font-xs) !important; }
+
+/* Header + row compactness */
+.rmu-cpt-app.window-app .window-content { padding: 3px !important; }
+.rmu-cpt__header { padding: 5px 6px !important; gap: 6px !important; }
+.rmu-cpt__row-head { padding: 6px !important; gap: 8px !important; }
+.rmu-cpt__controls { gap: 5px !important; row-gap: 6px !important; column-gap: 10px !important; }
+
+/* Portraits */
+.rmu-cpt__img-frame {
+  width: var(--rmu-portrait) !important;
+  height: var(--rmu-portrait) !important;
+}
+.rmu-cpt__img {
+  width: var(--rmu-portrait) !important;
+  height: var(--rmu-portrait) !important;
+}
+
+/* Selects + inputs */
+.rmu-cpt__select,
+.rmu-cpt__bonusap-input,
+.rmu-cpt__inst .rmu-cpt__select {
+  font-size: var(--rmu-cpt-font-sm) !important;
+  min-height: 28px !important;
+  padding: 3px 7px !important;
+  line-height: 1.05 !important;
+}
+.rmu-cpt__select--cost { min-height: 26px !important; padding: 2px 6px !important; }
+
+/* Phase cards: smaller but still readable */
+.rmu-cpt-app .rmu-cpt__grid {
+  grid-template-columns: repeat(auto-fit, minmax(270px, 270px)) !important;
+  gap: 4px !important;
+}
+.rmu-cpt-app .rmu-cpt__phase { padding: 3px !important; gap: 3px !important; }
+
+/* Action images: smaller */
+.rmu-cpt-app .rmu-action-img,
+.rmu-cpt__slot .rmu-action-img {
+  width: var(--rmu-action-img-w) !important;
+  height: var(--rmu-action-img-h) !important;
+}
+
+/* Horizontal mains strip (1–2 phase modes): reduce gaps + separator width */
+.rmu-cpt-app .rmu-cpt__mains.is-horizontal { gap: var(--rmu-mains-gap) !important; }
+.rmu-cpt-app .rmu-cpt__mains.is-horizontal .rmu-cpt__chainsep { flex: 0 0 var(--rmu-chainsep-w) !important; }
+
+/* IMPORTANT: override earlier 1–2 phase “min-width math” so it matches the *actual* image size */
+.rmu-cpt-app.rmu-cpt__wrap[data-phase-count="1"] .rmu-cpt__phase,
+.rmu-cpt-app.rmu-cpt__wrap[data-phase-count="2"] .rmu-cpt__phase {
+  width: max-content !important;
+	  /* FIX43: In 1–2 phase modes, make the phase "frame" (blue border) wider
+     so it fully wraps the image+selector stacks (including the cost button and
+     select chrome). */
+  min-width: calc(
+    (
+      (var(--rmu-mains-count, 1) * var(--rmu-action-img-w))
+      + ((var(--rmu-mains-count, 1) - 1) * var(--rmu-chainsep-w))
+      /* Gap applies between *all* flex items: slots + chain separators.
+         For N mains there are (2N-1) items and thus (2N-2) gaps. */
+      + ((var(--rmu-mains-count, 1) - 1) * 2 * var(--rmu-mains-gap))
+      + 18px
+	    ) * 1.56
+  ) !important;
+}
+
+/* Also override the earlier horizontal-mains image rule (it used 225px) */
+.rmu-cpt-app .rmu-cpt__mains.is-horizontal .rmu-action-img {
+  width: var(--rmu-action-img-w) !important;
+  max-width: var(--rmu-action-img-w) !important;
+  height: var(--rmu-action-img-h) !important;
+}
+
+/* In 1–2 phase modes, each slot (image + select) should be a fixed block so
+   the Phase frame width math is correct and no selector gets clipped. */
+.rmu-cpt-app .rmu-cpt__mains.is-horizontal .rmu-cpt__slot {
+  min-width: var(--rmu-action-img-w) !important;
+}
+
+.rmu-cpt-app .rmu-cpt__mains.is-horizontal .rmu-cpt__select {
+  width: var(--rmu-action-img-w) !important;
+  max-width: var(--rmu-action-img-w) !important;
+}
+
+
+
+/* v0.6.19.37.35.15-fix27-widgettext75
+   Reduce text *inside interactive widgets* (buttons, selects, inputs, dropdown options)
+   to 75% of the surrounding UI size.
+*/
+.rmu-cpt-app :is(button, select, input, textarea),
+.rmu-cpt-app .rmu-cpt__btn,
+.rmu-cpt-app .rmu-cpt__toggle,
+.rmu-cpt-app .rmu-cpt__select,
+.rmu-cpt-app .rmu-cpt__bonusap-input,
+.rmu-cpt-app .rmu-vdd__btn,
+.rmu-cpt-app .rmu-vdd__trigger,
+.rmu-cpt-app .rmu-vdd__opt,
+.rmu-cpt-app .rmu-vdd__portal,
+.rmu-cpt-app .rmu-vdd__portal * {
+  font-size: 0.75em !important;
+}
+
+
+/* 0.6.19.37.35.15-fix28-nowrap-layout
+   - No wrap in controls (user hates wrap-around)
+   - Instantaneous selector text half size vs widget baseline (0.75em -> 0.375em)
+   - Main Action selector text double size vs widget baseline (0.75em -> 1.5em)
+   - Header (round/phase/version) doubled
+   - Actor name +25%
+*/
+.rmu-cpt-app .rmu-cpt__controls {
+  flex-wrap: nowrap !important;
+}
+
+.rmu-cpt-app .rmu-cpt__inst .rmu-cpt__select {
+  font-size: 0.375em !important;
+}
+
+.rmu-cpt-app .rmu-cpt__mains .rmu-cpt__select {
+  font-size: 1.5em !important;
+}
+
+.rmu-cpt-app .rmu-cpt__header h2 {
+  font-size: 2em !important;
+  line-height: 1.05 !important;
+}
+
+.rmu-cpt-app .rmu-cpt__ver {
+  font-size: 2em !important;
+  line-height: 1.05 !important;
+}
+
+.rmu-cpt-app .rmu-cpt__name {
+  font-size: 1.25em !important;
+}
+
+.rmu-cpt-app .rmu-cpt__header-left { white-space: nowrap; }
+
+/* fix84: add breathing room between the Round/Phase title and the header buttons (Guide/History)
+   Use margin-left so it wins over header gap overrides. */
+.rmu-cpt-app .rmu-cpt__header-right {
+  margin-left: 26px !important;
+}
+
+
+/* 0.6.19.37.35.15-fix29-widgets2x-nonoverlap
+   - Double-size the Bonus Action spinner widget and the Instantaneous Actions selector widget.
+   - Prevent phase frames from overlapping by using a flex row with max-content cards.
+   - Keep NO-WRAP layout and let JS auto-size the window width to fit.
+*/
+
+/* Make phases lay out as a single row of max-content cards (no overlap). */
+.rmu-cpt-app .rmu-cpt__grid {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  gap: 10px !important;
+}
+
+.rmu-cpt-app .rmu-cpt__phase {
+  flex: 0 0 auto !important;
+  width: max-content !important;
+  min-width: max-content !important;
+}
+
+/* Ensure no internal elements force wrapping inside phase cards. */
+.rmu-cpt-app .rmu-cpt__phase * { white-space: nowrap; }
+
+/* Allow movement overlays to use line breaks (override the global nowrap above). */
+.rmu-cpt-app .rmu-action-img-overlay {
+  white-space: pre-line !important;
+}
+
+/* Double-size BONUS + INSTANT widgets (container-driven scale). */
+.rmu-cpt-app .rmu-cpt__spinner,
+.rmu-cpt-app .rmu-cpt__inst {
+  font-size: 2em !important;
+}
+
+/* Keep the Instant selector readable when scaled (override prior half-size rule). */
+.rmu-cpt-app .rmu-cpt__inst .rmu-cpt__select {
+  font-size: 1em !important;
+  min-height: 38px !important;
+}
+
+/* Bonus spinner: make buttons/input comfortably large when scaled. */
+.rmu-cpt-app .rmu-cpt__spinner .rmu-cpt__spinbtn {
+  width: 38px !important;
+  height: 38px !important;
+}
+.rmu-cpt-app .rmu-cpt__spinner .rmu-cpt__bonusap-input {
+  width: 80px !important;
+  height: 38px !important;
+}
+
+/* 0.6.19.37.35.15-fix31-inst-bonus-text-match-conc
+   User intent:
+   - Instantaneous action selector text is NOT a header; it must match the concentration button text size.
+   - Bonus action widget text should also match concentration button text size.
+   - Keep widgets physically large (hit targets) without scaling their text.
+*/
+
+/* Stop container font scaling for BONUS + INSTANT widgets (it was inflating text). */
+.rmu-cpt-app .rmu-cpt__spinner,
+.rmu-cpt-app .rmu-cpt__inst {
+  font-size: 1em !important;
+}
+
+/* Make BONUS + INSTANT widgets clickable without being comically huge. */
+.rmu-cpt-app .rmu-cpt__spinner .rmu-cpt__spinbtn {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 8px !important;
+}
+.rmu-cpt-app .rmu-cpt__spinner .rmu-cpt__bonusap-input {
+  width: 74px !important;
+  height: 34px !important;
+  padding: 3px 8px !important;
+}
+
+.rmu-cpt-app .rmu-cpt__inst .rmu-cpt__select {
+  min-height: 34px !important;
+  padding: 4px 10px !important;
+}
+
+/* Match concentration button text size */
+.rmu-cpt-app .rmu-cpt__inst .rmu-cpt__select,
+.rmu-cpt-app .rmu-cpt__spinner :is(select, input, button) {
+  font-size: 13px !important;
+  line-height: 1.05 !important;
+}
+
+/* 0.6.19.37.35.15-fix33-no-scroll-no-wrap-fit
+   HARD RULES:
+   - No scrollbars anywhere in this app.
+   - No wrap-around anywhere in this app.
+   Strategy:
+   - Phase row is a single flex row, evenly spaced.
+   - Window width is auto-fit in JS; if the viewport is smaller than needed,
+     JS shrinks --rmu-phase-w (and derived image sizes) to keep everything on one row.
+*/
+
+/* Never wrap the control rows */
+.rmu-cpt-app .rmu-cpt__controls { flex-wrap: nowrap !important; }
+.rmu-cpt-app .rmu-cpt__concbar { flex-wrap: nowrap !important; overflow: hidden !important; }
+
+/* Phase row: single line, evenly spaced, no scroll */
+.rmu-cpt-app .rmu-cpt__grid {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  justify-content: flex-start !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+  padding: 6px 12px !important;
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+}
+
+/* Phase tiles size via variable (JS may adjust to fit the screen) */
+.rmu-cpt-app .rmu-cpt__phase {
+  flex: 0 0 auto !important;
+  width: max-content !important;
+  min-width: var(--rmu-phase-w, 260px) !important;
+}
+
+/* Action images must never force widening; keep them within the phase tile */
+.rmu-cpt-app .rmu-action-img,
+.rmu-cpt-app .rmu-cpt__phase .rmu-action-img,
+.rmu-cpt__slot .rmu-action-img {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 170 / 96;
+  object-fit: cover;
+}
+
+/* fix47: Bonus action image must match other action images in the phase.
+   The fluid 100% sizing above can make some bonus images appear "massive"
+   when their wrapper spans the full phase width. Force the same fixed
+   dimensions used everywhere else. */
+.rmu-cpt-app .rmu-action-img,
+.rmu-cpt-app .rmu-cpt__phase .rmu-action-img,
+.rmu-cpt__slot .rmu-action-img {
+  width: var(--rmu-action-img-w) !important;
+  max-width: var(--rmu-action-img-w) !important;
+  height: var(--rmu-action-img-h) !important;
+}
+
+/* Kill any legacy overflow-x:auto that would create scrollbars */
+.rmu-cpt-app .rmu-cpt__grid,
+.rmu-cpt-app .rmu-cpt__concbar,
+.rmu-phase-tracker-v3 .window-content,
+.rmu-cpt-app .window-content {
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+}
+
+
+/* 0.6.19.37.35.15-fix33-no-scroll-no-wrap-fit
+   HARD RULES:
+   - No scrollbars anywhere in this app.
+   - No wrap-around anywhere in this app.
+   Strategy:
+   - Phase row is a single flex row, evenly spaced.
+   - Window width is auto-fit in JS; if the viewport is smaller than needed,
+     JS shrinks --rmu-phase-w (and derived image sizes) to keep everything on one row.
+*/
+
+/* Never wrap the control rows */
+.rmu-cpt-app .rmu-cpt__controls { flex-wrap: nowrap !important; }
+.rmu-cpt-app .rmu-cpt__concbar { flex-wrap: nowrap !important; overflow: hidden !important; }
+
+/* Phase row: single line, evenly spaced, no scroll */
+.rmu-cpt-app .rmu-cpt__grid {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  justify-content: flex-start !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+  padding: 6px 12px !important;
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+}
+
+/* Phase tiles size via variable (JS may adjust to fit the screen) */
+.rmu-cpt-app .rmu-cpt__phase {
+  flex: 0 0 auto !important;
+  width: max-content !important;
+  min-width: var(--rmu-phase-w, 260px) !important;
+}
+
+/* Action images must never force widening; keep them within the phase tile */
+.rmu-cpt-app .rmu-action-img,
+.rmu-cpt-app .rmu-cpt__phase .rmu-action-img,
+.rmu-cpt__slot .rmu-action-img {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 170 / 96;
+  object-fit: cover;
+}
+
+/* Kill any legacy overflow-x:auto that would create scrollbars */
+.rmu-cpt-app .rmu-cpt__grid,
+.rmu-cpt-app .rmu-cpt__concbar,
+.rmu-phase-tracker-v3 .window-content,
+.rmu-cpt-app .window-content {
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+}
+
+/* 0.6.19.37.35.15-fix33-no-scroll-no-wrap-fit
+   HARD RULES:
+   - No scrollbars anywhere in this app.
+   - No wrap-around anywhere in this app.
+   Strategy:
+   - Phase row is a single flex row, evenly spaced.
+   - Window width is auto-fit in JS; if the viewport is smaller than needed,
+     JS shrinks --rmu-phase-w (and derived image sizes) to keep everything on one row.
+*/
+
+/* Never wrap the control rows */
+.rmu-cpt-app .rmu-cpt__controls { flex-wrap: nowrap !important; }
+.rmu-cpt-app .rmu-cpt__concbar { flex-wrap: nowrap !important; overflow: hidden !important; }
+
+/* Phase row: single line, evenly spaced, no scroll */
+.rmu-cpt-app .rmu-cpt__grid {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  justify-content: flex-start !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+  padding: 6px 12px !important;
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+}
+
+/* Phase tiles size via variable (JS may adjust to fit the screen) */
+.rmu-cpt-app .rmu-cpt__phase {
+  flex: 0 0 auto !important;
+  width: max-content !important;
+  min-width: var(--rmu-phase-w, 260px) !important;
+}
+
+/* Action images must never force widening; keep them within the phase tile */
+.rmu-cpt-app .rmu-action-img,
+.rmu-cpt-app .rmu-cpt__phase .rmu-action-img,
+.rmu-cpt__slot .rmu-action-img {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 170 / 96;
+  object-fit: cover;
+}
+
+/* Kill any legacy overflow-x:auto that would create scrollbars */
+.rmu-cpt-app .rmu-cpt__grid,
+.rmu-cpt-app .rmu-cpt__concbar,
+.rmu-phase-tracker-v3 .window-content,
+.rmu-cpt-app .window-content {
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+}
+
+
+/* 0.6.19.37.35.15-fix33-no-scroll-no-wrap-fit
+   HARD RULES:
+   - No scrollbars anywhere in this app.
+   - No wrap-around anywhere in this app.
+   Strategy:
+   - Phase row is a single flex row, evenly spaced.
+   - Window width is auto-fit in JS; if the viewport is smaller than needed,
+     JS shrinks --rmu-phase-w (and derived image sizes) to keep everything on one row.
+*/
+
+/* Never wrap the control rows */
+.rmu-cpt-app .rmu-cpt__controls { flex-wrap: nowrap !important; }
+.rmu-cpt-app .rmu-cpt__concbar { flex-wrap: nowrap !important; overflow: hidden !important; }
+
+/* Phase row: single line, evenly spaced, no scroll */
+.rmu-cpt-app .rmu-cpt__grid {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  justify-content: flex-start !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+  padding: 6px 12px !important;
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+}
+
+/* Phase tiles size via variable (JS may adjust to fit the screen) */
+.rmu-cpt-app .rmu-cpt__phase {
+  flex: 0 0 auto !important;
+  width: max-content !important;
+  min-width: var(--rmu-phase-w, 260px) !important;
+}
+
+/* Action images must never force widening; keep them within the phase tile */
+.rmu-cpt-app .rmu-action-img,
+.rmu-cpt-app .rmu-cpt__phase .rmu-action-img,
+.rmu-cpt__slot .rmu-action-img {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 170 / 96;
+  object-fit: cover;
+}
+
+/* Kill any legacy overflow-x:auto that would create scrollbars */
+.rmu-cpt-app .rmu-cpt__grid,
+.rmu-cpt-app .rmu-cpt__concbar,
+.rmu-phase-tracker-v3 .window-content,
+.rmu-cpt-app .window-content {
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+}
+
+/* 0.6.19.37.35.15-fix33-no-scroll-no-wrap-fit
+   HARD RULES:
+   - No scrollbars anywhere in this app.
+   - No wrap-around anywhere in this app.
+   Strategy:
+   - Phase row is a single flex row, evenly spaced.
+   - Window width is auto-fit in JS; if the viewport is smaller than needed,
+     JS shrinks --rmu-phase-w (and derived image sizes) to keep everything on one row.
+*/
+
+/* Never wrap the control rows */
+.rmu-cpt-app .rmu-cpt__controls { flex-wrap: nowrap !important; }
+.rmu-cpt-app .rmu-cpt__concbar {
+  flex-wrap: nowrap !important;
+  overflow: hidden !important;
+}
+
+/* Phase row: single line, evenly spaced, no scroll */
+.rmu-cpt-app .rmu-cpt__grid {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  justify-content: flex-start !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+  padding: 6px 12px !important;
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+}
+
+/* Phase tiles size via variable (JS may adjust to fit the screen) */
+.rmu-cpt-app .rmu-cpt__phase {
+  flex: 0 0 auto !important;
+  width: max-content !important;
+  min-width: var(--rmu-phase-w, 260px) !important;
+}
+
+/* Action images must never force widening; keep them within the phase tile */
+.rmu-cpt-app .rmu-action-img,
+.rmu-cpt-app .rmu-cpt__phase .rmu-action-img,
+.rmu-cpt__slot .rmu-action-img {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 170 / 96;
+  object-fit: cover;
+}
+
+/* Kill any legacy overflow-x:auto that would create scrollbars */
+.rmu-cpt-app .rmu-cpt__grid,
+.rmu-cpt-app .rmu-cpt__concbar,
+.rmu-cpt__grid,
+.rmu-cpt__concbar,
+.rmu-phase-tracker-v3 .window-content,
+.rmu-cpt-app.window-app .window-content,
+.rmu-cpt-app .window-content {
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+}
+
+
+/* 0.6.19.37.35.15-fix34-unify-widget-fonts
+   User intent:
+   - All widget text and buttons use the SAME size as Main Action selector text (1.5em).
+   - Widget headers, concentration buttons, and phase frame titles are 1/4 larger (1.875em).
+   - Keep controls compact (avoid huge touch-target sizing).
+*/
+.rmu-cpt-app {
+  --rmu-cpt-widget-font: 1.5em;
+  --rmu-cpt-widget-font-h: 1.875em; /* 1.5em * 1.25 */
+}
+
+/* Base widget text size: applies to selects/inputs/buttons inside this app */
+.rmu-cpt-app :is(select, input, textarea, button, .rmu-cpt__btn, .rmu-cpt__spinbtn, .rmu-cpt__select, .rmu-cpt__chainsep) {
+  font-size: var(--rmu-cpt-widget-font) !important;
+  line-height: 1.05 !important;
+}
+
+/* Widget headers + phase titles */
+.rmu-cpt-app :is(.rmu-cpt__spinner-label, .rmu-cpt__conc-label, .rmu-cpt__phase-title, .rmu-cpt__bonus-slot-title) {
+  font-size: var(--rmu-cpt-widget-font-h) !important;
+  line-height: 1.05 !important;
+}
+
+/* Concentration buttons were slightly too large: reduce by 1/4 from header size */
+.rmu-cpt-app .rmu-cpt__concbar .rmu-cpt__toggle {
+  font-size: calc(var(--rmu-cpt-widget-font-h) * 0.75) !important;
+  line-height: 1.05 !important;
+}
+
+/* Compact the Bonus + Instant widgets controls (previous builds made them too large) */
+.rmu-cpt-app .rmu-cpt__spinner .rmu-cpt__spinbtn {
+  width: 26px !important;
+  height: 26px !important;
+  border-radius: 8px !important;
+  padding: 0 !important;
+}
+.rmu-cpt-app .rmu-cpt__spinner .rmu-cpt__bonusap-input {
+  width: 56px !important;
+  height: 26px !important;
+  padding: 2px 6px !important;
+}
+.rmu-cpt-app .rmu-cpt__inst .rmu-cpt__select {
+  min-height: 26px !important;
+  height: 26px !important;
+  padding: 2px 8px !important;
+}
+
+
+/* fix36: allow content height to grow so the window can auto-expand when bonus UI appears */
+.rmu-cpt-app .rmu-cpt__wrap {
+  height: auto !important;
+  min-height: 0 !important;
+}
+.rmu-cpt-app .rmu-cpt__body {
+  flex: 0 0 auto !important;
+  min-height: 0 !important;
+}
+
+/* fix36: allow natural vertical growth so the window can expand when Bonus Action sections appear */
+.rmu-cpt__wrap {
+  min-height: 0 !important;
+  height: auto !important;
+}
+.rmu-cpt__body {
+  flex: 0 0 auto !important;
+  min-height: 0 !important;
+}
+
+/* ============================
+   FIX39: Phase border must wrap images + selectors in 1–2 phase rounds
+   Later blocks in this stylesheet (and some Foundry themes) can force the
+   phase grid back to fixed-width columns (e.g. 300px). That constrains the
+   .rmu-cpt__phase box, causing the action images/selectors to spill outside
+   the phase border. For 1–2 phase rounds we always size the grid tracks to
+   max-content so the phase frame expands to fully contain its content.
+   ============================ */
+
+.rmu-cpt-app.rmu-cpt__wrap[data-phase-count="1"] .rmu-cpt__grid {
+  grid-template-columns: max-content !important;
+  justify-content: center !important;
+  align-items: start !important;
+}
+
+.rmu-cpt-app.rmu-cpt__wrap[data-phase-count="2"] .rmu-cpt__grid {
+  grid-template-columns: repeat(2, max-content) !important;
+  justify-content: space-evenly !important;
+  align-items: start !important;
+}
+
+.rmu-cpt-app.rmu-cpt__wrap[data-phase-count="1"] .rmu-cpt__phase,
+.rmu-cpt-app.rmu-cpt__wrap[data-phase-count="2"] .rmu-cpt__phase {
+  width: max-content !important;
+  max-width: none !important;
+}
+
+
+/* fix48: Hard-lock action image size so bonus images can never "go massive".
+   Multiple earlier patches may reintroduce fluid 100% sizing; this final rule wins. */
+.rmu-cpt-app .rmu-action-img,
+.rmu-cpt-app .rmu-cpt__phase .rmu-action-img,
+.rmu-cpt__slot .rmu-action-img {
+  width: var(--rmu-action-img-w) !important;
+  max-width: var(--rmu-action-img-w) !important;
+  height: var(--rmu-action-img-h) !important;
+  max-height: var(--rmu-action-img-h) !important;
+  object-fit: cover !important;
+}
+
+
+
+/* fix52: Bonus actions row sits directly under MAIN actions, horizontally aligned and justified */
+.rmu-cpt-app .rmu-cpt__bonusrow {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: flex-start !important;
+  justify-content: space-evenly !important;
+  gap: var(--rmu-mains-gap, 6px) !important;
+  /* In a content-sized Phase card, let this row size to its contents too,
+     so the Phase border can grow to fit wide bonus selectors. */
+  width: max-content !important;
+  margin-top: 6px !important;
+}
+
+/* Make each bonus slot stack like a main slot in horizontal mode (image above select) */
+.rmu-cpt-app .rmu-cpt__bonusrow .rmu-cpt__bonus-slot {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 2px !important;
+}
+
+/* Keep bonus meta under the dropdown, centered */
+.rmu-cpt-app .rmu-cpt__bonusrow .rmu-cpt__bonus-slot > .rmu-cpt__meta {
+  width: 100% !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 4px !important;
+  margin-top: 2px !important;
+}
+
+/* Hide the inline icon in bonus slot (it offsets alignment vs mains); use the image/title instead */
+.rmu-cpt-app .rmu-cpt__bonusrow .rmu-cpt__bonus-slot > .rmu-cpt__icon {
+  display: none !important;
+}
+
+/* Bonus slot heading inside each phase */
+.rmu-cpt__bonus-title {
+  text-align: center;
+  font-size: var(--rmu-cpt-widget-font-h);
+  line-height: 1.1;
+  margin: 2px 0 4px 0;
+  white-space: nowrap;
+}
+
+
+/* fix50: Bonus Action header inside phase above bonus image; size matches phase title */
+.rmu-cpt-app .rmu-cpt__bonus-slot-title{
+  display:block !important;
+  text-align:center !important;
+  margin: 0 0 6px 0 !important;
+  white-space: nowrap !important;
+}
+.rmu-cpt-app .rmu-cpt__bonus-slot .rmu-action-selectwrap{
+  display:flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+}
+
+/* v0.6.19.37.35.15 - fix51: bonus selector width matches main selector width */
+.rmu-cpt-app .rmu-cpt__mains .rmu-action-selectwrap{
+  width: var(--rmu-action-img-w) !important;
+}
+.rmu-cpt-app .rmu-cpt__mains .rmu-action-selectwrap .rmu-cpt__select{
+  width: 100% !important;
+}
+
+.rmu-cpt-app .rmu-cpt__bonus-slot .rmu-action-selectwrap{
+  width: var(--rmu-action-img-w) !important;
+}
+.rmu-cpt-app .rmu-cpt__bonus-slot .rmu-action-selectwrap .rmu-cpt__select{
+  width: 100% !important;
+}
+
+/* fix63: strong button shadows that adapt to light/dark UI themes */
+.rmu-cpt-app {
+  --rmu-cpt-btn-shadow: 0 4px 10px rgba(0,0,0,0.65);
+}
+
+/* Foundry theme classes (preferred) */
+.theme-light .rmu-cpt-app { --rmu-cpt-btn-shadow: 0 4px 10px rgba(0,0,0,0.65); }
+.theme-dark  .rmu-cpt-app { --rmu-cpt-btn-shadow: 0 4px 10px rgba(255,255,255,0.35); }
+
+/* Fallback: prefers-color-scheme */
+@media (prefers-color-scheme: dark) {
+  .rmu-cpt-app { --rmu-cpt-btn-shadow: 0 4px 10px rgba(255,255,255,0.35); }
+}
+
+.rmu-cpt-app :is(button, .rmu-cpt__btn, .rmu-cpt__toggle, .rmu-cpt__spinbtn) {
+  box-shadow: var(--rmu-cpt-btn-shadow) !important;
+}
+
+/* fix63: history table stays horizontal (no wrapping) */
+.rmu-cpt-history table { width: 100%; border-collapse: collapse; }
+.rmu-cpt-history th, .rmu-cpt-history td { white-space: nowrap; }
+.rmu-cpt-history td { max-width: 240px; overflow: hidden; text-overflow: ellipsis; }
+
+
+/* fix66: History dialog may use horizontal scrollbar if needed (only history window) */
+.window-app.rmu-cpt-history .window-content{
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+}
+.window-app.rmu-cpt-history table,
+.window-app.rmu-cpt-history th,
+.window-app.rmu-cpt-history td{
+  white-space: nowrap !important;
+}
+
+/* fix66: Match Mental Focus warning label + Endurance REQ button font size to concentration buttons */
+.rmu-cpt__mf-label{
+  font-size: 9px !important; /* same as .rmu-cpt__toggle */
+  line-height: 1.05 !important;
+}
+.rmu-cpt__end-btn{
+  font-size: 9px !important; /* same as .rmu-cpt__toggle */
+  line-height: 1.05 !important;
+}
+
+
+/* fix67: square corners for all buttons; rounded corners for label-style elements */
+.rmu-cpt-app button {
+  border-radius: 0 !important;
+}
+
+/* Labels (non-button informational pills) keep rounded corners */
+.rmu-cpt-app :is(
+  .rmu-cpt__mf-label,
+  .rmu-cpt__spinner-label,
+  .rmu-cpt__conc-label,
+  .rmu-cpt__phase-title,
+  .rmu-cpt__bonus-slot-title,
+  .rmu-cpt__complete-label,
+  .rmu-cpt__incomplete-label
+) {
+  border-radius: 10px !important;
+}
+
+/* -------------------------------------------------------------------------
+   fix74-final: Phase frames must always contain their selectors
+
+   Some older "no-scroll/no-wrap" patches force fixed phase widths and
+   overflow:hidden on the phase row, which makes wide dropdowns appear
+   outside the blue Phase border.
+
+   These final overrides ensure:
+   - each Phase card wraps to its widest child
+   - the phase row can scroll horizontally if needed (instead of clipping)
+   ------------------------------------------------------------------------- */
+
+.rmu-cpt-app .rmu-cpt__grid {
+  justify-content: flex-start !important;
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+}
+
+.rmu-cpt-app .rmu-cpt__phase {
+  flex: 0 0 auto !important;
+  width: max-content !important;
+  min-width: var(--rmu-phase-w, 260px) !important;
+}
+
+.rmu-cpt-app .rmu-cpt__bonusrow {
+  width: max-content !important;
+}
+
+.rmu-phase-tracker-v3 .window-content,
+.rmu-cpt-app.window-app .window-content,
+.rmu-cpt-app .window-content {
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+}
+
+
+/* fix76 - center phase cards as a group (without breaking overflow) */
+.rmu-cpt-app .rmu-cpt__grid {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  justify-content: center !important;
+  align-items: stretch !important;
+  gap: 6px !important;
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+}
+
+/* -------------------------------------------------------------------------
+   fix77: Center BONUS action rows + match BONUS selector width to MAIN
+
+   - Bonus action *slots* (inside each phase card) should be centered, just
+     like the phase cards row.
+   - Bonus action dropdown widths must match the main phase dropdown widths.
+   ------------------------------------------------------------------------- */
+
+/* Center the bonus-row group within each phase card. */
+.rmu-cpt-app .rmu-cpt__bonusrow {
+  justify-content: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Ensure BOTH main and bonus action selectors use identical width math. */
+.rmu-cpt-app {
+  --rmu-action-select-w: var(--rmu-action-img-w);
+}
+
+.rmu-cpt-app .rmu-cpt__mains.is-horizontal .rmu-cpt__select,
+.rmu-cpt-app .rmu-cpt__bonusrow .rmu-cpt__select {
+  width: var(--rmu-action-select-w) !important;
+  max-width: var(--rmu-action-select-w) !important;
+  box-sizing: border-box !important;
+}
+
+/* Keep the wraps aligned too (so the blue border always contains them). */
+.rmu-cpt-app .rmu-cpt__mains.is-horizontal .rmu-action-selectwrap,
+.rmu-cpt-app .rmu-cpt__bonusrow .rmu-action-selectwrap {
+  width: var(--rmu-action-select-w) !important;
+  max-width: var(--rmu-action-select-w) !important;
+  box-sizing: border-box !important;
+}
+
+/* -------------------------------------------------------------------------
+   fix78: Bonus dropdown width MUST match Main dropdown width (per Phase card)
+
+   In normal 4-phase mode, the main selector fills the phase card width, but
+   bonus selectors were constrained to the action-image width. This makes bonus
+   dropdowns look narrower than main dropdowns.
+
+   Rules:
+   - In NON-horizontal mains (standard 4-phase layout), main dropdown stacks are full width.
+   - Bonus dropdown stacks inside the phase card are also full width.
+   - Horizontal/multislot layouts keep their existing fixed-width sizing.
+   ------------------------------------------------------------------------- */
+
+.rmu-cpt-app .rmu-cpt__mains:not(.is-horizontal) .rmu-action-selectwrap{
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.rmu-cpt-app .rmu-cpt__mains:not(.is-horizontal) .rmu-cpt__select{
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.rmu-cpt-app .rmu-cpt__bonusrow .rmu-cpt__bonus-slot .rmu-action-selectwrap{
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.rmu-cpt-app .rmu-cpt__bonusrow .rmu-cpt__bonus-slot .rmu-cpt__select{
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Small per-selector button to undo token movement made in the current phase.
+   (Shows only when a movement overlay is present on a selector.) */
+.rmu-cpt__resetmove {
+  margin-top: 4px;
+  font-size: 10px;
+  padding: 1px 6px;
+  line-height: 1.2;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #2b2b2b;
+  color: #ffffff;
+  border: 1px solid #111111;
+}
+
+.rmu-cpt__resetmove:hover:not(:disabled) {
+  filter: brightness(1.15);
+}
+
+.rmu-cpt__resetmove:disabled {
+  opacity: 0.6;
+  cursor: default;
+}

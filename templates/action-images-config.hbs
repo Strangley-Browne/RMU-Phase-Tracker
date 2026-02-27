@@ -1,0 +1,36 @@
+<form class="rmu-action-images-config" autocomplete="off">
+  <p class="notes">Assign an image for each action. Use Browse to pick an image.</p>
+
+  <table class="rmu-aic-table">
+    <thead>
+      <tr>
+        <th style="width:38%">Action</th>
+        <th>Image Path</th>
+        <th style="width:22%">Tools</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each rows}}
+      <tr>
+        <td>
+          <div class="rmu-aic-action">
+            <div class="rmu-aic-label">{{label}}</div>
+            <div class="rmu-aic-key">{{key}}</div>
+          </div>
+        </td>
+        <td>
+          <input type="text" name="img.{{key}}" value="{{path}}" placeholder="icons/.../melee.webp" />
+        </td>
+        <td class="rmu-aic-tools">
+          <button type="button" class="rmu-aic-btn" data-browse="{{key}}"><i class="fas fa-folder-open"></i> Browse</button>
+          <button type="button" class="rmu-aic-btn" data-clear="{{key}}"><i class="fas fa-eraser"></i> Clear</button>
+        </td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+
+  <footer class="sheet-footer flexrow">
+    <button type="submit"><i class="far fa-save"></i> Save</button>
+  </footer>
+</form>

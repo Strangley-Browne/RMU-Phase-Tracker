@@ -1,0 +1,267 @@
+<div class="rmu-cpt__wrap rmu-cpt-app theme-{{uiTheme}} {{#if isGM}}rmu-cpt--gm{{else}}rmu-cpt--player{{/if}} has-user-color" data-phase-count="{{phaseCount}}" style="--rmu-user-hex: {{userColorHex}}; --rmu-user-bg-top: {{userBgTop}}; --rmu-user-bg-bot: {{userBgBot}};">
+  {{#if noCombat}}
+    <div class="rmu-cpt__empty">
+      <p>No active combat.</p>
+      <p>Create or activate a combat in Foundry, then open this tracker again.</p>
+    </div>
+  {{else}}
+    <header class="rmu-cpt__header">
+      <div class="rmu-cpt__header-left">
+        <h2>Round {{round}} — Phase {{phase}} of {{phaseCount}}</h2>
+      </div>
+      <div class="rmu-cpt__header-right">
+        <button type="button" class="rmu-cpt__guidebtn" data-action="openGuide">Guide</button>
+        <button type="button" class="rmu-cpt__guidebtn" data-action="openHistory">History</button>
+      </div>
+    </header>
+
+    {{#if noVisibleCombatant}}
+    <div class="rmu-cpt__empty">
+      <p>Nothing to show right now.</p>
+      <p>This tracker only displays the current-turn combatant. It will appear automatically when it is the turn of a combatant you own.</p>
+    </div>
+    {{else}}
+    <div class="rmu-cpt__body">
+      {{#each rows as |row|}}
+        <section class="rmu-cpt__row {{#if row.gmOwnedActor}}is-gm-owned{{else}}is-player-owned{{/if}}" data-combatant-id="{{row.combatantId}}">
+          <div class="rmu-cpt__row-head">
+            <div class="rmu-cpt__img-frame"><img class="rmu-cpt__img" src="{{row.img}}" alt="" /></div>
+            <div class="rmu-cpt__meta">
+              <div class="rmu-cpt__name">{{row.name}}</div>
+              <div class="rmu-cpt__controls">
+                <div class="rmu-cpt__spinner">
+                  <span class="rmu-cpt__spinner-label">Bonus Action</span>
+                  <div class="rmu-cpt__spinner-control">
+                    <button type="button" class="rmu-cpt__spinbtn" data-action="bonusDec" data-combatant-id="{{row.combatantId}}" aria-label="Decrease Bonus Action" {{#if row.gmReadOnly}}disabled{{/if}}>−</button>
+                    <input class="rmu-cpt__bonusap-input"
+                           data-field="bonusCount"
+                           data-combatant-id="{{row.combatantId}}"
+                           type="number"
+                           min="0"
+                           max="4"
+                           step="1"
+                           value="{{row.bonusCount}}"
+                           inputmode="numeric"
+                           aria-label="Bonus Action" readonly {{#if row.gmReadOnly}}disabled{{/if}} />
+                    <button type="button" class="rmu-cpt__spinbtn" data-action="bonusInc" data-combatant-id="{{row.combatantId}}" aria-label="Increase Bonus Action" {{#if row.gmReadOnly}}disabled{{/if}}>+</button>
+                  </div>
+                </div>
+                <div class="rmu-cpt__inst">
+                  <span class="rmu-cpt__spinner-label">Instantaneous Actions</span>
+                  <select class="rmu-cpt__select" data-field="instantAction" data-combatant-id="{{row.combatantId}}" aria-label="Instantaneous Actions" {{#if row.gmReadOnly}}disabled{{/if}}>
+                    {{#each row.instantOptions as |o|}}
+                      <option value="{{o.value}}" {{#if o.selected}}selected{{/if}}>{{o.label}}</option>
+                    {{/each}}
+                  </select>
+	                      {{#if ph.isCurrent}}{{#if bonus.showResetMove}}
+	                        <button type="button" class="rmu-cpt__resetmove" data-action="resetMove" data-combatant-id="{{../../combatantId}}"
+	                                {{#if ../../lockPhaseSelectors}}disabled{{/if}} {{#if ../../gmReadOnly}}disabled{{/if}}>
+	                          Reset Move
+	                        </button>
+	                      {{/if}}{{/if}}
+                </div>
+
+
+
+                <div class="rmu-cpt__concwrap">
+                  <div class="rmu-cpt__conc-label">Concentrating on...</div>
+                  <div class="rmu-cpt__concbar">
+                    {{#each row.concButtons as |b|}}
+                      <button type="button"
+                              class="rmu-cpt__toggle rmu-cpt__concbtn {{#if b.isOn}}is-on{{/if}}"
+                              data-action="toggleConcFlag"
+                              data-combatant-id="{{../combatantId}}"
+                              data-flag="{{b.flag}}"
+                              {{#if b.disabled}}disabled{{/if}} {{#if ../gmReadOnly}}disabled{{/if}}
+                              >
+                        <i class="{{b.icon}}"></i>
+                        {{b.label}}
+                      </button>
+                    {{/each}}
+                  </div>
+
+                  {{#if row.showMentalFocusLabel}}
+                    <div class="rmu-cpt__mf-label">Mental Focus roll REQ/RND; Creep Pace Only</div>
+                  {{/if}}
+                  {{#if row.showMentalFocusButton}}
+                    <button type="button" class="rmu-cpt__mf-btn" data-action="ackMentalFocus" data-combatant-id="{{row.combatantId}}" {{#if row.gmReadOnly}}disabled{{/if}}>Mental Focus roll REQ (RNDx6)</button>
+                  {{/if}}
+
+                  {{#if row.showEnduranceButton}}
+                    <button type="button" class="rmu-cpt__end-btn" data-action="ackEndurance" data-combatant-id="{{row.combatantId}}" {{#if row.gmReadOnly}}disabled{{/if}}>Endurance Roll REQ (RNDx6)</button>
+                  {{/if}}
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="rmu-cpt__grid {{#if row.hasMultiSlot}}is-multislot{{/if}}">
+            {{#each row.phases as |ph|}}
+              <div class="rmu-cpt__phase {{#if ph.isCurrent}}is-current{{else}}is-locked{{/if}} {{#if ph.isMultiSlot}}is-multislot{{/if}}" style="--rmu-mains-count: {{ph.mains.length}};">
+                <div class="rmu-cpt__phase-title">
+                  <span>{{ph.label}}</span>
+                </div>
+                <div class="rmu-cpt__mains is-horizontal" style="--rmu-mains-count: {{ph.mains.length}};">
+                {{#each ph.mains as |main|}}
+                <div class="rmu-cpt__slot {{#unless ../../../showActionImages}}rmu-cpt__slot--noimg{{else}}{{#unless main.image}}rmu-cpt__slot--noimg{{/unless}}{{/unless}}">
+                  {{#if main.icon}}<i class="{{main.icon}} rmu-cpt__icon"></i>{{/if}}
+
+                  <div class="rmu-action-selectwrap {{#if ../../../showActionImages}}{{#if main.image}}has-img{{/if}}{{/if}}">
+                    {{!-- Action image (optional). If no image is available, show movement overlays on the LEFT inside the phase frame. --}}
+                    {{#if ../../../showActionImages}}
+                      {{#if main.image}}
+                        <div class="rmu-action-imgwrap">
+                          <img class="rmu-action-img" src="{{main.image}}" alt="" />
+                          {{#if main.moveOverlay}}<div class="rmu-action-img-overlay">{{main.moveOverlay}}</div>{{/if}}
+                          {{#if main.incidentalOverlay}}
+                            <div class="rmu-action-img-overlay rmu-action-img-overlay--incidental">
+                              {{main.incidentalOverlay}}
+                              {{#if main.incidentalPenalty}}<div class="rmu-action-img-overlay__pen">Penalty {{main.incidentalPenalty}}</div>{{/if}}
+                            </div>
+                          {{/if}}
+                        </div>
+                      {{else}}
+                        {{#if main.moveOverlay}}<div class="rmu-action-left-overlay">{{main.moveOverlay}}</div>{{/if}}
+                        {{#if main.incidentalOverlay}}
+                          <div class="rmu-action-left-overlay rmu-action-left-overlay--incidental">
+                            {{main.incidentalOverlay}}
+                            {{#if main.incidentalPenalty}}<div class="rmu-action-left-overlay__pen">Penalty {{main.incidentalPenalty}}</div>{{/if}}
+                          </div>
+                        {{/if}}
+                      {{/if}}
+                    {{else}}
+                      {{#if main.moveOverlay}}<div class="rmu-action-left-overlay">{{main.moveOverlay}}</div>{{/if}}
+                      {{#if main.incidentalOverlay}}
+                        <div class="rmu-action-left-overlay rmu-action-left-overlay--incidental">
+                          {{main.incidentalOverlay}}
+                          {{#if main.incidentalPenalty}}<div class="rmu-action-left-overlay__pen">Penalty {{main.incidentalPenalty}}</div>{{/if}}
+                        </div>
+                      {{/if}}
+                    {{/if}}
+                    <select class="rmu-cpt__select {{#if main.isInvalid}}is-invalid{{/if}} {{#if main.isComplete}}is-complete{{/if}} {{#if main.chainBefore}}is-chainbroken{{/if}} {{#if main.penaltyText}}has-penalty{{/if}}"
+                            data-field="phaseAction"
+	                            data-combatant-id="{{../../combatantId}}"
+                            data-plan-key="{{main.key}}" data-penalty="{{main.penaltyText}}"
+                            {{#unless ph.isCurrent}}disabled{{/unless}}
+	                            {{#if ../../lockPhaseSelectors}}disabled{{/if}} {{#if ../../gmReadOnly}}disabled{{/if}}>
+                      {{#each main.mainOptions as |opt|}}
+                        <option value="{{opt.value}}" {{#if opt.selected}}selected{{/if}}>{{opt.label}}</option>
+                      {{/each}}
+                    </select>
+	                  {{#if ph.isCurrent}}{{#if main.showResetMove}}
+	                    <button type="button" class="rmu-cpt__resetmove" data-action="resetMove" data-combatant-id="{{../../combatantId}}"
+	                            {{#if ../../lockPhaseSelectors}}disabled{{/if}} {{#if ../../gmReadOnly}}disabled{{/if}}>
+	                      Reset Move
+	                    </button>
+	                  {{/if}}{{/if}}
+                    {{#if main.showIncompleteLabel}}<div class="rmu-cpt__incomplete">{{main.actionName}} Incomplete</div>{{/if}}
+                  </div>
+
+                  <div class="rmu-cpt__meta">
+                    {{#if main.capLabel}}<span class="rmu-cpt__cap">{{main.capLabel}}</span>{{/if}}
+                    {{#if main.showFinAct}}
+                      <label class="rmu-cpt__finact">
+	                        <input type="checkbox" data-field="finAct" data-combatant-id="{{../../combatantId}}" data-plan-key="{{main.key}}"
+                               {{#if main.finActChecked}}checked{{/if}}
+                               {{#if main.finActDisabled}}disabled{{/if}} {{#if ../../gmReadOnly}}disabled{{/if}}>
+                        <small>FIN<br>ACT?</small>
+                      </label>
+                    {{/if}}
+                    {{#if main.isReq}}<span class="rmu-cpt__req">REQ</span>{{/if}}
+                    {{#if main.penaltyText}}<span class="rmu-cpt__pen">{{main.penaltyText}}</span>{{/if}}
+                    {{#if main.isComplete}}<span class="rmu-cpt__complete">Complete!!</span>{{/if}}
+                  </div>
+
+                </div>
+                {{#unless @last}}
+                  <div class="rmu-cpt__chainsep"></div>
+                {{/unless}}
+                {{/each}}
+                </div>
+
+                {{#if ph.hasBonus}}
+                  <div class="rmu-cpt__bonusrow">
+                  {{#each ph.bonuses as |bonus|}}
+                  <div class="rmu-cpt__slot rmu-cpt__bonus-slot {{#unless ../../../showActionImages}}rmu-cpt__slot--noimg{{else}}{{#unless bonus.image}}rmu-cpt__slot--noimg{{/unless}}{{/unless}}">
+                    {{#if bonus.icon}}<i class="{{bonus.icon}} rmu-cpt__icon"></i>{{/if}}
+
+                    <div class="rmu-action-selectwrap {{#if ../../../showActionImages}}{{#if bonus.image}}has-img{{/if}}{{/if}}">
+                      <div class="rmu-cpt__bonus-slot-title">Bonus Action</div>
+                      {{!-- Same rule for bonus: if image is missing, render movement overlay on left inside the phase frame. --}}
+                      {{#if ../../../showActionImages}}
+                        {{#if bonus.image}}
+                          <div class="rmu-action-imgwrap">
+                            <img class="rmu-action-img" src="{{bonus.image}}" alt="" />
+                            {{#if bonus.moveOverlay}}<div class="rmu-action-img-overlay">{{bonus.moveOverlay}}</div>{{/if}}
+                            {{#if bonus.incidentalOverlay}}
+                              <div class="rmu-action-img-overlay rmu-action-img-overlay--incidental">
+                                {{bonus.incidentalOverlay}}
+                                {{#if bonus.incidentalPenalty}}<div class="rmu-action-img-overlay__pen">Penalty {{bonus.incidentalPenalty}}</div>{{/if}}
+                              </div>
+                            {{/if}}
+                          </div>
+                        {{else}}
+                          {{#if bonus.moveOverlay}}<div class="rmu-action-left-overlay">{{bonus.moveOverlay}}</div>{{/if}}
+                          {{#if bonus.incidentalOverlay}}
+                            <div class="rmu-action-left-overlay rmu-action-left-overlay--incidental">
+                              {{bonus.incidentalOverlay}}
+                              {{#if bonus.incidentalPenalty}}<div class="rmu-action-left-overlay__pen">Penalty {{bonus.incidentalPenalty}}</div>{{/if}}
+                            </div>
+                          {{/if}}
+                        {{/if}}
+                      {{else}}
+                        {{#if bonus.moveOverlay}}<div class="rmu-action-left-overlay">{{bonus.moveOverlay}}</div>{{/if}}
+                        {{#if bonus.incidentalOverlay}}
+                          <div class="rmu-action-left-overlay rmu-action-left-overlay--incidental">
+                            {{bonus.incidentalOverlay}}
+                            {{#if bonus.incidentalPenalty}}<div class="rmu-action-left-overlay__pen">Penalty {{bonus.incidentalPenalty}}</div>{{/if}}
+                          </div>
+                        {{/if}}
+                      {{/if}}
+                      <select class="rmu-cpt__select {{#if bonus.isInvalid}}is-invalid{{/if}} {{#if bonus.isComplete}}is-complete{{/if}} {{#if bonus.penaltyText}}has-penalty{{/if}}"
+                              data-field="phaseAction"
+                              data-combatant-id="{{../../combatantId}}"
+                              data-plan-key="{{bonus.key}}" data-penalty="{{bonus.penaltyText}}"
+                              {{#unless ph.isCurrent}}disabled{{/unless}}
+                              {{#if ../../lockPhaseSelectors}}disabled{{/if}} {{#if ../../gmReadOnly}}disabled{{/if}}>
+                        {{#each bonus.bonusOptions as |opt|}}
+                          <option value="{{opt.value}}" {{#if opt.selected}}selected{{/if}}>{{opt.label}}</option>
+                        {{/each}}
+	                      </select>
+	                      {{#if ph.isCurrent}}{{#if bonus.showResetMove}}
+	                        <button type="button" class="rmu-cpt__resetmove" data-action="resetMove" data-combatant-id="{{../../combatantId}}"
+	                                {{#if ../../lockPhaseSelectors}}disabled{{/if}} {{#if ../../gmReadOnly}}disabled{{/if}}>
+	                          Reset Move
+	                        </button>
+	                      {{/if}}{{/if}}
+	                    </div>
+
+                    <div class="rmu-cpt__meta">
+                      {{#if bonus.capLabel}}<span class="rmu-cpt__cap">{{bonus.capLabel}}</span>{{/if}}
+                      {{#if bonus.showFinAct}}
+                        <label class="rmu-cpt__finact">
+                          <input type="checkbox" data-field="finAct" data-combatant-id="{{../../combatantId}}" data-plan-key="{{bonus.key}}"
+                                 {{#if bonus.finActChecked}}checked{{/if}}
+                                 {{#if bonus.finActDisabled}}disabled{{/if}} {{#if ../../gmReadOnly}}disabled{{/if}}>
+                            <small>FIN<br>ACT?</small>
+                          </input>
+                        </label>
+                      {{/if}}
+                      {{#if bonus.isReq}}<span class="rmu-cpt__req">REQ</span>{{/if}}
+                      {{#if bonus.penaltyText}}<span class="rmu-cpt__pen">{{bonus.penaltyText}}</span>{{/if}}
+                      {{#if bonus.isComplete}}<span class="rmu-cpt__complete">Complete!!</span>{{/if}}
+                    </div>
+                  </div>
+                  {{/each}}
+                </div>
+                {{/if}}
+              </div>
+            {{/each}}
+          </div>
+        </section>
+      {{/each}}
+    </div>
+    {{/if}}
+  {{/if}}
+</div>

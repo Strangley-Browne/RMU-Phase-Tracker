@@ -1,0 +1,29 @@
+{
+  "id": "rmu-phase-tracker-v3",
+  "title": "RMU Phase Tracker v3",
+  "description": "Range actions: chain may be interrupted after meeting MIN; if interrupted before MIN, chain is lost. Penalty overlay (from the point MIN is met onward) is rounded to the nearest -25 and shows remaining shortfall to UPPER: -25 per 1 AP short; hides at 0 and shows Complete! when UPPER is met. Range actions now include a per-selector FIN\\nACT? checkbox (small label) to end the chain early and mark that selector Complete! as if fully finished. (5 concentration toggles, cap 2, hold-action label+delay, bonus coloring fixed.) Instantaneous actions (minCost 0) are hidden from phase selectors unless an instantaneous action is chosen. Action images can be configured in module settings and optionally shown next to selectors.",
+  "version": "V3.0.4",
+  "authors": [
+    {
+      "name": "Local Module"
+    }
+  ],
+  "compatibility": {
+    "minimum": "13",
+    "verified": "13"
+  },
+  "esmodules": [
+    "scripts/main.js"
+  ],
+  "styles": [
+    "styles/tracker.css"
+  ],
+  "templates": [
+    "templates/tracker.hbs",
+    "templates/action-images-config.hbs"
+  ],
+  "socket": true,
+  "name": "rmu-phase-tracker-v3",
+  "semanticVersion": "3.0.4",
+  "readme": "docs/player-guide.html"
+}
